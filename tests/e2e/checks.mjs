@@ -135,6 +135,35 @@ export default async function ({ page, check, assert, sleep, settle, brightness,
     const d1 = await m.page.evaluate(() => window.__map.state().distance);
     assert.ok(d1 < d0 * 0.8, `distance ${d0} -> ${d1}`);
   });
+  // ── Touch-Richtung: Inhalt folgt dem Finger ──
+  const cdpM = await m.page.context().newCDPSession(m.page);
+  const touch = (type, pts) => cdpM.send('Input.dispatchTouchEvent', { type, touchPoints: pts.map(([x, y], id) => ({ x, y, id })) });
+  await check('mobile: one-finger swipe right moves the map right', async () => {
+    await m.page.evaluate(() => { window.__map.select(null); window.__map.flyTo('sol', { distance: 9000, tilt: 0.3, azimuth: 0 }); });
+    await settle(m.page); await sleep(400);
+    const a = await m.page.evaluate(() => window.__map.screenOf('sol'));
+    await touch('touchStart', [[120, 420]]);
+    for (let i = 1; i <= 10; i++) await touch('touchMove', [[120 + i * 12, 420]]);
+    await touch('touchEnd', []);
+    await sleep(200);
+    const b = await m.page.evaluate(() => window.__map.screenOf('sol'));
+    assert.ok(b.x - a.x > 80, `sol x ${a.x.toFixed(0)} -> ${b.x.toFixed(0)}`);
+    assert.ok(Math.abs(b.y - a.y) < 30, `sol y ${a.y.toFixed(0)} -> ${b.y.toFixed(0)}`);
+  });
+  await check('mobile: two-finger twist turns the map the same way', async () => {
+    await m.page.evaluate(() => window.__map.flyTo('sol', { distance: 9000, tilt: 0.3, azimuth: 0 }));
+    await settle(m.page); await sleep(300);
+    // Bezugspunkt rechts von der Bildmitte
+    const c = [195, 422];
+    const ref = await m.page.evaluate(([x, y]) => window.__map.groundAt(x, y), [c[0] + 100, c[1]]);
+    await touch('touchStart', [[c[0] - 60, c[1]], [c[0] + 60, c[1]]]);
+    for (let i = 1; i <= 10; i++) { const a = (i / 10) * 0.5; await touch('touchMove', [[c[0] - 60 * Math.cos(a), c[1] - 60 * Math.sin(a)], [c[0] + 60 * Math.cos(a), c[1] + 60 * Math.sin(a)]]); }
+    await touch('touchEnd', []);
+    await sleep(200);
+    const p = await m.page.evaluate(r => window.__map.screenOfPos(r), ref);
+    // Finger im Uhrzeigersinn gedreht -> rechter Punkt wandert nach unten
+    assert.ok(p.y > c[1] + 20, `ref y ${p.y.toFixed(0)} (center ${c[1]})`);
+  });
   await check('mobile: no console errors', () => assert.deepEqual(m.errors, []));
   await m.ctx.close();
 

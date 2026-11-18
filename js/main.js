@@ -170,7 +170,7 @@ function start() {
       const mid = [(a[0] + b[0]) / 2, (a[1] + b[1]) / 2];
       const vertical = Math.abs(g.panPx[1]) > Math.abs(g.panPx[0]) * 1.5 && Math.abs(g.zoom - 1) < 0.02;
       cam = applyZoom(cam, g.zoom, groundAt(mid[0], mid[1]));
-      cam = applyRotate(cam, -g.rotate, vertical ? -g.panPx[1] * 0.004 : 0);
+      cam = applyRotate(cam, g.rotate, vertical ? -g.panPx[1] * 0.004 : 0);
       if (!vertical) cam = applyPan(cam, g.panPx[0], g.panPx[1], H, FOV);
       gesture = { a: [...a], b: [...b] };
       dismissHint();
@@ -262,6 +262,7 @@ function start() {
     onFrame(fn) { frameHooks.push(fn); },
     screenOf: id => markers.screenOf(id),
     pickAt: (x, y) => markers.pick(x, y),
+    screenOfPos: pos => { const v = new THREE.Vector3(pos[0], 0, pos[1]).project(ctx.camera); return { x: (v.x * 0.5 + 0.5) * W, y: (-v.y * 0.5 + 0.5) * H }; },
     landmarks: { get count() { return landmarks.count; }, visible: id => landmarks.visible(id) },
     groundAt,
     state: () => ({ ...cam, flying: !!flight, selected }),
