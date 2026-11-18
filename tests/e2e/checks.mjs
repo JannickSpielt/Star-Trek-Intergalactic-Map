@@ -58,4 +58,25 @@ export default async function ({ page, check, assert, sleep, settle, brightness,
     const qt = await page.textContent("#readout-quadrant"); const st = await page.evaluate(() => window.__map.state()); assert.match(qt, /Beta/, `got "${qt}" target ${st.target} flying ${st.flying}`);
     assert.match(await page.textContent('#scale-label'), /LJ/);
   });
+
+  // ── Task 10: Infofenster ──
+  await check('selecting Vulcan opens the info panel with facts', async () => {
+    await page.evaluate(() => window.__map.focus('vulcan'));
+    await page.waitForSelector('#info.open', { timeout: 5000 });
+    const text = await page.textContent('#info');
+    assert.match(text, /Vulcan/); assert.match(text, /Beta/); assert.match(text, /TOS/);
+    const href = await page.getAttribute('#info a.ma-link', 'href');
+    assert.ok(href.endsWith('/Vulcan'), href);
+  });
+  await check('planet image is drawn', async () => {
+    await sleep(400);
+    const filled = await page.evaluate(() => { const c = document.querySelector('#info canvas'); const d = c.getContext('2d').getImageData(c.width / 2 - 10, c.height / 2 - 10, 20, 20).data; let s = 0; for (let i = 3; i < d.length; i += 4) s += d[i]; return s / (d.length / 4); });
+    assert.ok(filled > 200, `alpha ${filled}`);
+  });
+  await settle(page); await sleep(300);
+  await shot(page, '04-info-vulcan');
+  await check('closing the panel clears the selection', async () => {
+    await page.click('#info-close');
+    assert.equal(await page.evaluate(() => window.__map.state().selected), null);
+  });
 }

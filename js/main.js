@@ -6,6 +6,7 @@ import { createOverlays } from './render/overlays.js';
 import { createMarkers } from './render/markers.js';
 import { createLabelLayer } from './ui/labels-dom.js';
 import { createFrame } from './ui/frame.js';
+import { createInfo } from './ui/info.js';
 import { BOOKMARKS } from './data/shapes.js';
 import { createCameraState, cameraPosition, screenAxes, flyPath, applyZoom, applyRotate, applyPan, pinch, isClick } from './core/camera.js';
 import { distance as dist } from './core/coords.js';
@@ -202,7 +203,16 @@ function start() {
     quality,
     layers: overlays.layers,
     flyTo, select,
-    focus(id) { select(id); flyTo(id); },
+    focus(id) {
+      select(id);
+      const p = PLACE[id]; if (!p) return;
+      const d = focusDistance(p);
+      // Bei offenem Infofenster (Desktop) das Ziel nach links aus dem Fenster schieben
+      const shiftPx = W > 760 ? Math.min(230, W * 0.18) : 0;
+      const k = shiftPx * (2 * Math.tan((FOV * Math.PI) / 360) * d) / H;
+      const { right } = screenAxes(cam.azimuth);
+      flyTo([p.pos[0] + right[0] * k, p.pos[1] + right[1] * k], { distance: d });
+    },
     on(ev, fn) { listeners[ev]?.push(fn); },
     onFrame(fn) { frameHooks.push(fn); },
     screenOf: id => markers.screenOf(id),
@@ -217,6 +227,8 @@ function start() {
     layers: overlays.layers,
     onBookmark: b => flyTo(b.target, { distance: b.distance === 'fit' ? 125000 : b.distance, tilt: b.distance === 'fit' ? 0.78 : cam.tilt }),
   });
+  const info = createInfo({ onClose: () => select(null), onCenter: id => map.focus(id) });
+  map.on('select', p => info.show(p));
   map.onFrame(c => frameUi.setStatus({ target: c.target, pxPerLy: pxPerLy(c.target), distance: c.distance }));
 
   /* ── Render-Schleife ── */
@@ -230,7 +242,7 @@ function start() {
     }
     applyCamera();
     galaxy.update(H, FOV, time);
-    overlays.update(time);
+    overlays.update(time, cam.distance);
     markers.update(ctx.camera, cam, W, H, time);
     labels.update(ctx.camera, cam, W, H, pxPerLy, tmpV);
     for (const fn of frameHooks) fn(cam, time);

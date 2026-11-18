@@ -178,6 +178,10 @@ export function createOverlays() {
 
   return {
     group, layers, anchors,
-    update(time) { for (const m of timed) m.uniforms.uTime.value = time; },
+    update(time, camDistance = 1e5) {
+      for (const m of timed) m.uniforms.uTime.value = time;
+      const fade = Math.min(1, Math.max(0.15, (camDistance - 1500) / 25000));
+      grid.children.forEach((l, i) => { l.material.opacity = (i < 2 ? 0.22 : 0.07) * fade; });
+    },
   };
 }

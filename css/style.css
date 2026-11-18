@@ -163,7 +163,7 @@ button:focus-visible, input:focus-visible, a:focus-visible, canvas:focus-visible
 .hint.gone { opacity: 0; }
 
 /* ── Infofenster ───────────────────────────────────────────────────── */
-.info { position: fixed; z-index: 7; right: 236px; top: calc(var(--top-h) + 14px); width: 380px; max-height: calc(100vh - var(--top-h) - var(--bottom-h) - 40px);
+.info { position: fixed; z-index: 7; right: 76px; top: calc(var(--top-h) + 14px); width: 380px; max-height: calc(100vh - var(--top-h) - var(--bottom-h) - 40px);
   display: flex; flex-direction: column; background: linear-gradient(180deg, rgba(10,12,20,.92), rgba(5,6,10,.94)); border-radius: 22px;
   box-shadow: 0 30px 80px rgba(0,0,0,.7), inset 0 0 0 1px var(--line); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
   transform: translateX(30px); opacity: 0; pointer-events: none; transition: transform .45s var(--ease), opacity .35s; overflow: hidden; }
