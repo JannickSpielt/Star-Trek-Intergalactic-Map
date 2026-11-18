@@ -30,7 +30,7 @@ export const TERRITORIES = [
 ];
 
 export const REGIONS = [
-  { id: 'badlands', name: 'Badlands', center: L(-2450, -650), r: 260, color: '#ff6a3d', series: ['DS9', 'VOY'], ma: 'Badlands', desc: 'Gefährliches Gebiet voller Plasmastürme nahe der cardassianischen Grenze – Rückzugsort des Maquis und Ort, an dem Voyager verschwand.' },
+  { id: 'badlands', name: 'Badlands', center: L(-2450, -650), r: 260, color: '#ff6a3d', series: ['DS9', 'VOY'], ma: 'Badlands', desc: 'Gebiet voller Plasmastürme an der cardassianischen Grenze. Der Maquis versteckte sich hier, und hier verschwand die Voyager.' },
   { id: 'delphi', name: 'Delphische Ausdehnung', center: L(850, 650), r: 330, color: '#c05bff', series: ['ENT'], ma: 'Delphische_Ausdehnung', desc: 'Von künstlichen Sphären verzerrte, physikalisch instabile Region. Heimat der Xindi, die im 22. Jahrhundert die Erde angriffen.' },
   { id: 'mutara', name: 'Mutara-Nebel', center: L(-420, 520), r: 120, color: '#ff4fa3', series: ['Filme'], ma: 'Mutara-Nebel', desc: 'Ionisierter Nebel, in dem Kirk und Khan ihr Duell austrugen. Hier entstand der Genesis-Planet.' },
   { id: 'briar', name: 'Briar Patch', center: L(2050, 1450), r: 220, color: '#ffb347', series: ['Filme'], ma: 'Briar_Patch', desc: 'Schwer navigierbarer Nebel um die Heimat der Ba\'ku, deren Ringe eine verjüngende Strahlung aussenden.' },

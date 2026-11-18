@@ -15,14 +15,14 @@ export const PLACES = [
   // ─── Föderation ───────────────────────────────────────────────
   P('sol', 'Sol (Erde)', L(0, 0), 'capital', 'fed', 1, 'city', ['TOS', 'TNG', 'DS9', 'VOY', 'ENT', 'DIS', 'PIC', 'Filme'], 'Erde',
     'Heimat der Menschheit und Herz der Föderation: Föderationsrat und Präsident tagen in Paris, das Starfleet-Hauptquartier liegt in San Francisco.', ['Erde', 'Earth', 'Terra', 'Sonnensystem']),
-  P('mars', 'Mars – Utopia Planitia', L(6, 9), 'station', 'fed', 4, 'desert', ['TNG', 'VOY', 'PIC', 'LD'], 'Utopia_Planitia_Flottenwerften',
+  P('mars', 'Mars, Utopia Planitia', L(6, 9), 'station', 'fed', 4, 'desert', ['TNG', 'VOY', 'PIC', 'LD'], 'Utopia_Planitia_Flottenwerften',
     'Die großen Orbitalwerften über dem Mars. Hier liefen unter anderem die Enterprise-D und die Voyager vom Stapel.', ['Utopia Planitia', 'Mars']),
   P('jupiter', 'Jupiter-Station', L(-8, 10), 'station', 'fed', 4, 'gas', ['TNG', 'VOY'], 'Jupiter-Station',
     'Forschungsstation im Jupiterorbit, an der Dr. Lewis Zimmerman das Medizinisch-Holografische Notfallprogramm entwickelte.', ['Jupiter']),
   P('vulcan', 'Vulcan', L(70, -45), 'planet', 'fed', 2, 'desert', ['TOS', 'TNG', 'ENT', 'DIS', 'SNW', 'Filme'], 'Vulcan',
     'Heiße Wüstenwelt der Vulkanier und Gründungsmitglied der Föderation. Suraks Lehre machte Logik zum Fundament der ganzen Kultur.', ['Vulkan', 'Vulcanis', "T'Khasi"]),
   P('andoria', 'Andoria', L(135, 70), 'planet', 'fed', 2, 'ice', ['TOS', 'ENT', 'DIS'], 'Andoria',
-    'Eisiger Mond eines Gasriesen und Heimat der blauhäutigen Andorianer – ebenfalls Gründungsmitglied der Föderation.', ['Andor']),
+    'Eisiger Mond eines Gasriesen und Heimat der blauhäutigen Andorianer, die ebenfalls zu den Gründern der Föderation gehören.', ['Andor']),
   P('tellar', 'Tellar Prime', L(-95, 95), 'planet', 'fed', 2, 'jungle', ['TOS', 'ENT', 'DIS'], 'Tellar_Prime',
     'Heimat der streitfreudigen Telariten, für die eine hitzige Debatte zum guten Ton gehört. Gründungsmitglied der Föderation.', ['Tellar']),
   P('alphacen', 'Alpha Centauri', L(-28, 18), 'planet', 'fed', 4, 'ocean', ['TOS', 'ENT', 'PIC'], 'Alpha_Centauri',
@@ -34,13 +34,13 @@ export const PLACES = [
   P('trill', 'Trill', L(-930, -240), 'planet', 'fed', 3, 'ocean', ['TNG', 'DS9', 'DIS', 'LD'], 'Trill_(Planet)',
     'Welt der Trill und ihrer langlebigen Symbionten, die Erinnerungen über viele Wirte hinweg weitertragen.', []),
   P('risa', 'Risa', L(-520, 310), 'planet', 'fed', 3, 'ocean', ['TNG', 'DS9', 'ENT', 'LD'], 'Risa',
-    'Durch Wetterkontrolle in ein tropisches Paradies verwandelt – der beliebteste Urlaubsort der Föderation.', []),
+    'Die Wetterkontrolle macht Risa zu einem tropischen Ferienort, dem beliebtesten der Föderation.', []),
   P('bolarus', 'Bolarus IX', L(-310, 720), 'planet', 'fed', 4, 'ocean', ['TNG', 'DS9', 'LD'], 'Bolarus_IX',
     'Heimat der blauhäutigen Bolianer, die zahlreiche Offiziere in der Sternenflotte stellen.', ['Bolianer']),
   P('rigel', 'Rigel', L(380, 420), 'planet', 'fed', 3, 'city', ['TOS', 'ENT', 'DIS'], 'Rigel',
     'Ein belebtes System mit mehreren bewohnten Welten und lebhaften Handelsplätzen.', []),
   P('deneb', 'Deneb IV', L(-1150, 720), 'station', 'fed', 4, 'barren', ['TNG'], 'Deneb_IV',
-    'Standort der Farpoint-Station – hier trat die Enterprise-D ihre allererste Mission an.', ['Farpoint']),
+    'Hier liegt die Farpoint-Station, das Ziel der allerersten Mission der Enterprise-D.', ['Farpoint']),
   P('cetialpha', 'Ceti Alpha V', L(-300, 460), 'planet', 'fed', 4, 'desert', ['TOS', 'Filme'], 'Ceti_Alpha_V',
     'Exil von Khan Noonien Singh. Nach der Explosion des Nachbarplaneten verwandelte sie sich in eine lebensfeindliche Ödnis.', ['Khan']),
   P('genesis', 'Genesis-Planet', L(-430, 545), 'anomaly', 'fed', 4, 'lava', ['Filme'], 'Genesis-Planet',
@@ -56,7 +56,7 @@ export const PLACES = [
   P('turkana', 'Turkana IV', L(-900, 1050), 'planet', 'fed', 4, 'city', ['TNG'], 'Turkana_IV',
     'Im Bürgerkrieg zerfallene Kolonie, Geburtswelt von Natasha Yar.', []),
   P('dorvan', 'Dorvan V', L(-1850, -680), 'planet', 'fed', 4, 'jungle', ['TNG'], 'Dorvan_V',
-    'Siedlung indigener Kolonisten, die per Vertrag an Cardassia fiel – einer der Funken des Maquis-Konflikts.', []),
+    'Siedlung indigener Kolonisten, die per Vertrag an Cardassia fiel. Solche Abtretungen trieben viele Siedler in den Maquis.', []),
   P('sb375', 'Sternenbasis 375', L(-1500, -700), 'station', 'fed', 4, 'station', ['DS9'], 'Sternenbasis_375',
     'Wichtige Basis im Dominion-Krieg und Sitz von Admiral Ross.', ['Starbase 375']),
   P('archer4', 'Archer IV', L(160, -140), 'planet', 'fed', 4, 'jungle', ['ENT'], 'Archer_IV',
@@ -90,7 +90,7 @@ export const PLACES = [
   P('remus', 'Remus', L(1010, -2310), 'planet', 'rom', 3, 'barren', ['ENT', 'Filme'], 'Remus',
     'Gebunden rotierende Schwesterwelt von Romulus. Die Remaner arbeiteten dort als Minenarbeiter und Soldaten.', ["ch'Havran"]),
   P('nimbus', 'Nimbus III', L(1500, -1850), 'planet', 'ind', 4, 'desert', ['Filme'], 'Nimbus_III',
-    'Der „Planet des galaktischen Friedens“ in der Neutralen Zone – ein gescheitertes gemeinsames Projekt dreier Mächte.', []),
+    'Der „Planet des galaktischen Friedens“ in der Neutralen Zone. Föderation, Klingonen und Romulaner wollten ihn gemeinsam aufbauen und ließen ihn verkommen.', []),
   P('galorndon', 'Galorndon Core', L(450, -1450), 'planet', 'ind', 4, 'storm', ['TNG'], 'Galorndon_Core',
     'Sturmumtoste Welt an der Neutralen Zone, auf der Geordi La Forge mit einem gestrandeten Romulaner überleben musste.', []),
 
@@ -126,7 +126,7 @@ export const PLACES = [
 
   // ─── Gamma-Quadrant ────────────────────────────────────────────
   P('idran', 'Idran (Wurmloch-Ausgang)', [-38000, -26500], 'wormhole', 'ind', 1, 'wormhole', ['DS9'], 'Idran',
-    'Dreifachsternsystem am anderen Ende des Bajoranischen Wurmlochs – das Tor in den Gamma-Quadranten.', ['Gamma-Quadrant']),
+    'Dreifachsternsystem am anderen Ende des Bajoranischen Wurmlochs, also der erste Halt im Gamma-Quadranten.', ['Gamma-Quadrant']),
   P('gruender', 'Gründer-Heimatwelt', [-35500, -19800], 'capital', 'dom', 1, 'ocean', ['DS9'], 'Heimatwelt_der_Gründer',
     'Ozeanwelt der Wechselbälger, die als Gründer das Dominion lenken. Verborgen im Omarion-Nebel.', ['Founders', 'Wechselbälger', 'Große Verbindung']),
   P('kurill', 'Kurill Prime', [-31500, -21500], 'planet', 'dom', 3, 'city', ['DS9'], 'Kurill_Prime',
@@ -142,7 +142,7 @@ export const PLACES = [
   P('jemhadar', "Jem'Hadar-Brutstätten", [-30500, -24500], 'station', 'dom', 4, 'station', ['DS9'], "Jem'Hadar",
     'Anlagen, in denen das Dominion seine genetisch gezüchteten Soldaten heranwachsen lässt.', ["Jem'Hadar", 'Ketracel-White']),
   P('teplan', 'Teplan', [-27500, -19500], 'planet', 'dom', 4, 'barren', ['DS9'], 'Teplan',
-    'Welt, die das Dominion mit einer tödlichen Seuche bestrafte – „die Blüte“ zeichnet alle Bewohner.', []),
+    'Das Dominion bestrafte diese Welt mit einer tödlichen Seuche, deren Male, „die Blüte“, alle Bewohner tragen.', []),
 
   // ─── Delta-Quadrant ────────────────────────────────────────────
   P('ocampa', 'Ocampa', [34500, -30200], 'planet', 'ind', 1, 'desert', ['VOY'], 'Ocampa',
@@ -156,7 +156,7 @@ export const PLACES = [
   P('vidiia', 'Vidiia', [29300, -23300], 'capital', 'vid', 3, 'city', ['VOY'], 'Vidiianer',
     'Heimat der Vidiianer, die die Phage zwingt, anderen Völkern Organe zu rauben.', ['Phage']),
   P('unikomplex', 'Borg-Unikomplex', [16000, -20500], 'capital', 'bor', 1, 'station', ['VOY', 'PIC'], 'Unikomplex',
-    'Gigantische Struktur aus Tausenden Modulen und Sitz der Borg-Königin – das Herz des Kollektivs.', ['Borg-Königin', 'Unicomplex']),
+    'Riesige Struktur aus Tausenden Modulen und Sitz der Borg-Königin. Von hier aus wird das Kollektiv gesteuert.', ['Borg-Königin', 'Unicomplex']),
   P('unimatrix', 'Unimatrix 01', [17500, -22500], 'station', 'bor', 4, 'station', ['VOY'], 'Unimatrix',
     'Zentrales Kommandogitter des Kollektivs im Unikomplex.', []),
   P('transwarp', 'Transwarp-Hub', [7200, -1200], 'station', 'bor', 2, 'station', ['VOY'], 'Transwarp-Hub',
@@ -174,5 +174,5 @@ export const PLACES = [
 
   // ─── Galaxisweit ───────────────────────────────────────────────
   P('shakaree', 'Sha Ka Ree', [0, 0], 'anomaly', 'ind', 2, 'barren', ['Filme'], 'Sha_Ka_Ree',
-    'Mythischer Planet hinter der Großen Barriere im galaktischen Kern – in Wahrheit das Gefängnis eines mächtigen Wesens.', ['Eden', 'Galaktischer Kern']),
+    'Sagenhafter Planet hinter der Großen Barriere im galaktischen Kern. Statt Eden fand die Enterprise dort ein eingesperrtes, mächtiges Wesen.', ['Eden', 'Galaktischer Kern']),
 ];

@@ -4,8 +4,8 @@
 
 # Galaktische Sternenkarte
 
-**Die Milchstraße des Star-Trek-Universums als interaktive 3D-Karte.**
-Quadranten, Großmächte, Grenzen und Schauplätze aus allen Serien und Filmen – zum Drehen, Zoomen und Nachschlagen.
+Die Milchstraße aus Star Trek als 3D-Karte zum Drehen, Zoomen und Nachschlagen.
+Mit Quadranten, Großmächten, Grenzen und Schauplätzen aus den Serien und Filmen.
 
 [![Live-Demo](https://img.shields.io/badge/Live--Demo-öffnen-ff9c3a?style=for-the-badge&labelColor=000000)](https://jannickspielt.github.io/Star-Trek-Intergalactic-Map/)
 [![Three.js](https://img.shields.io/badge/three.js-0.170-99ccff?style=for-the-badge&labelColor=000000)](https://threejs.org)
@@ -18,20 +18,19 @@ Quadranten, Großmächte, Grenzen und Schauplätze aus allen Serien und Filmen �
 
 </div>
 
----
+## Was drin ist
 
-## Was die Karte kann
+Die Galaxie besteht aus rund 300.000 Sternen in vier Spiralarmen, mit Balken, Staubbändern und leuchtenden Nebeln. Man kann von der ganzen Milchstraße bis zu den Nachbarsternen der Erde hineinzoomen und die Ansicht frei drehen und kippen.
 
-| | |
-|---|---|
-| 🌌 **Echte 3D-Galaxie** | Rund 300.000 Sterne in vier Spiralarmen mit Balken, Staubbändern und Nebelleuchten. Frei drehen, kippen und zoomen – von der ganzen Milchstraße bis zu den Nachbarsternen der Erde. |
-| 🛡️ **Großmächte & Grenzen** | Föderation, Klingonen, Romulaner, Cardassianer, Dominion, Borg und 14 weitere Reiche. Dazu die Romulanische Neutrale Zone, die Entmilitarisierte Zone und die klingonische Grenze. |
-| 🪐 **70 Schauplätze** | Jeder Ort hat einen kurzen Text, seine Serien und Filme, Quadrant, Entfernung zur Erde und ein eigenes, im Browser berechnetes Planetenbild. Mit Link zu Memory Alpha. |
-| 🌀 **Anomalien** | Badlands, Mutara-Nebel, Delphische Ausdehnung, Briar Patch, die Große Barriere im Kern, die Galaktische Barriere am Rand und das Bajoranische Wurmloch als leuchtender Bogen bis in den Gamma-Quadranten. |
-| 🔎 **Suche** | Findet auch andere Schreibweisen: „Kronos“ führt nach Qo'noS, „Terok Nor“ zu Deep Space 9. |
-| 🧭 **Navigation** | Schnellziele in der Seitenleiste, Übersichtskarte, Ebenen zum Ein- und Ausblenden, Maßstab und Koordinaten in der Statuszeile. |
-| 📱 **Handy & PC** | Ziehen, Pinch-Zoom und Drehen mit zwei Fingern. Am Handy öffnet sich das Infofenster von unten. |
-| ⬇️ **Als App** | Installierbar auf Startbildschirm oder Desktop und nach dem ersten Besuch auch offline nutzbar. |
+Eingezeichnet sind 20 Reiche, von der Föderation, den Klingonen und Romulanern bis zum Dominion im Gamma- und den Borg im Delta-Quadranten. Dazu kommen die Romulanische Neutrale Zone, die Entmilitarisierte Zone an der cardassianischen Grenze und die Grenze zum Klingonischen Reich.
+
+70 Orte lassen sich anklicken. Das Infofenster zeigt einen kurzen Text, die Serien und Filme, in denen der Ort vorkommt, Quadrant, Entfernung zur Erde und ein Planetenbild, das der Browser selbst berechnet. Ein Link führt zu Memory Alpha.
+
+Anomalien wie die Badlands, der Mutara-Nebel, die Delphische Ausdehnung und das Briar Patch erscheinen als farbige Wolken. Die Große Barriere umschließt den Kern, die Galaktische Barriere den Rand. Das Bajoranische Wurmloch spannt sich als leuchtender Bogen von Deep Space 9 bis in den Gamma-Quadranten.
+
+Die Suche kennt auch andere Schreibweisen: „Kronos“ findet Qo'noS, „Terok Nor“ findet Deep Space 9. In der Seitenleiste gibt es Schnellziele und Schalter für die einzelnen Ebenen, unten rechts eine Übersichtskarte.
+
+Auf dem Handy funktionieren Ziehen, Pinch-Zoom und Drehen mit zwei Fingern, das Infofenster fährt von unten herein. Die Seite lässt sich als App installieren und läuft nach dem ersten Besuch auch ohne Internet.
 
 <table>
 <tr>
@@ -49,33 +48,33 @@ Quadranten, Großmächte, Grenzen und Schauplätze aus allen Serien und Filmen �
 | Aktion | Maus | Touch |
 |---|---|---|
 | Verschieben | Linke Maustaste ziehen | Ein Finger ziehen |
-| Zoomen | Mausrad, Doppelklick, `+` / `−` | Zwei Finger auseinander / zusammen |
-| Drehen & kippen | Rechte Maustaste ziehen (oder `Strg` + ziehen) | Zwei Finger drehen / gemeinsam hoch und runter |
-| Ort auswählen | Klick auf Markierung | Antippen |
+| Zoomen | Mausrad, Doppelklick, `+` / `−` | Zwei Finger auseinander oder zusammen |
+| Drehen und kippen | Rechte Maustaste ziehen (oder `Strg` + ziehen) | Zwei Finger drehen oder gemeinsam hoch und runter schieben |
+| Ort auswählen | Klick auf die Markierung | Antippen |
 | Suchen | `/` drücken oder ins Suchfeld klicken | Suchfeld antippen |
 | Auswahl schließen | `Esc` | Infofenster nach unten wischen |
 
 ## Lokal starten
 
-Die Karte ist eine reine statische Webseite ohne Build-Schritt. Wegen der JavaScript-Module braucht sie aber einen kleinen lokalen Webserver:
+Es gibt keinen Build-Schritt. Weil die Seite JavaScript-Module lädt, braucht sie aber einen kleinen lokalen Webserver:
 
 ```bash
 npm run serve
 ```
 
-Danach <http://localhost:8080> öffnen. Ohne npm geht es genauso mit `python3 -m http.server 8080`.
+Danach <http://localhost:8080> öffnen. Ohne npm geht es auch mit `python3 -m http.server 8080`.
 
 ## Auf GitHub Pages veröffentlichen
 
-1. Im Repository **Settings → Pages** öffnen.
-2. Bei *Source* **Deploy from a branch** wählen, den Branch und den Ordner `/ (root)` auswählen.
+1. Im Repository Settings → Pages öffnen.
+2. Bei Source „Deploy from a branch“ wählen, dann den Branch und den Ordner `/ (root)`.
 3. Speichern. Nach etwa einer Minute ist die Karte unter `https://<benutzername>.github.io/Star-Trek-Intergalactic-Map/` erreichbar.
 
 ## Als App installieren
 
-- **Android / Chrome:** Menü ⋮ → *App installieren*
-- **iPhone / Safari:** Teilen → *Zum Home-Bildschirm*
-- **Desktop / Chrome & Edge:** Installieren-Symbol rechts in der Adressleiste
+- Android mit Chrome: Menü ⋮ → App installieren
+- iPhone mit Safari: Teilen → Zum Home-Bildschirm
+- Desktop mit Chrome oder Edge: das Installieren-Symbol rechts in der Adressleiste
 
 ## Projektaufbau
 
@@ -91,22 +90,24 @@ sw.js                 Service Worker für Offline-Betrieb
 tests/                Unit-Tests (node:test) und Browser-Tests (Playwright)
 ```
 
-Neue Orte kommen in `js/data/places.js`. Jeder Eintrag braucht Position, Fraktion, Typ, eine Wichtigkeit von 1 bis 4, einen Kurztext, die Serien und einen Bildstil. Die Tests prüfen, ob alles vollständig ist.
+Neue Orte kommen in `js/data/places.js`. Jeder Eintrag braucht Position, Fraktion, Typ, eine Wichtigkeit von 1 bis 4, einen Kurztext, die Serien und einen Bildstil. Fehlt etwas, schlagen die Tests an.
 
 ## Tests
 
 ```bash
 npm test        # Logik und Daten
-npm run e2e     # Browser-Test der ganzen Seite (Desktop, Handy, ohne WebGL)
+npm run e2e     # Browser-Tests: Desktop, Handy, ohne WebGL, offline
 ```
 
-## Ausblick
+## Was noch kommt
 
-- **Etappe 2:** Voyagers Heimreise mit Abspielmodus, Filter nach Serie, Entfernungsmesser mit Warp-Reisezeiten, teilbare Links
-- **Etappe 3:** Grenzen je Jahrhundert, weitere Schiffsreisen, Favoriten, Ambient-Sound
+- Etappe 2: Voyagers Heimreise mit Abspielmodus, Filter nach Serie, Entfernungsmesser mit Warp-Reisezeiten, Links auf einzelne Orte
+- Etappe 3: Grenzen je Jahrhundert, weitere Schiffsreisen, Favoriten, Hintergrundklang
 
 ## Hinweise
 
-Dies ist ein **inoffizielles, nicht-kommerzielles Fanprojekt**. *Star Trek* und alle zugehörigen Namen sind Marken von CBS Studios / Paramount. Dieses Projekt steht in keiner Verbindung zu ihnen.
-Alle Texte, Planetenbilder, das Logo und die Oberfläche sind eigene Arbeiten. Es werden keine Bilder oder Grafiken aus Serien und Filmen verwendet.
-Eine offizielle, widerspruchsfreie Sternenkarte gibt es im Canon nicht. Die Positionen orientieren sich an Angaben aus Serien und Filmen und sind für die Lesbarkeit angenähert. Gezeigt wird die Zeit um **2375**, am Ende des Dominion-Kriegs.
+Das hier ist ein inoffizielles Fanprojekt ohne kommerzielle Absicht. Star Trek und die zugehörigen Namen sind Marken von CBS Studios und Paramount, mit denen dieses Projekt nichts zu tun hat.
+
+Texte, Planetenbilder, Logo und Oberfläche sind selbst gemacht. Bilder oder Grafiken aus Serien und Filmen werden nicht verwendet.
+
+Eine offizielle, widerspruchsfreie Sternenkarte gibt es im Canon nicht. Die Positionen folgen den Angaben aus Serien und Filmen, sind aber zugunsten der Lesbarkeit angenähert. Die Karte zeigt den Stand um 2375, am Ende des Dominion-Kriegs.
