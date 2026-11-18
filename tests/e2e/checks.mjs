@@ -154,4 +154,23 @@ export default async function ({ page, check, assert, sleep, settle, brightness,
     const ok = await page.evaluate(async () => { const r = await navigator.serviceWorker?.getRegistration(); return !!r; });
     assert.ok(ok);
   });
+
+  // ── Final-Review #1: keinerlei Überlappung aller sichtbaren Beschriftungen ──
+  const allLabelsClear = async (pg, name) => {
+    const rects = await pg.evaluate(() => [...document.querySelectorAll('#labels > div')]
+      .filter(el => el.style.opacity !== '0' && getComputedStyle(el).opacity !== '0' && el.offsetParent !== null)
+      .map(el => { const b = el.getBoundingClientRect(); return { t: el.textContent, x: b.x, y: b.y, w: b.width, h: b.height }; })
+      .filter(r => r.w > 0 && r.x < innerWidth && r.y < innerHeight && r.x + r.w > 0 && r.y + r.h > 0));
+    for (let i = 0; i < rects.length; i++) for (let j = i + 1; j < rects.length; j++) {
+      const a = rects[i], b = rects[j];
+      assert.ok(!(a.x < b.x + b.w - 1 && b.x < a.x + a.w - 1 && a.y < b.y + b.h - 1 && b.y < a.y + a.h - 1), `${name}: "${a.t}" overlaps "${b.t}"`);
+    }
+  };
+  for (const [id, d] of [['sol', 12000], ['bajor', 4000], ['romulus', 6000], ['sol', 60000]]) {
+    await check(`no label overlaps at ${id} / ${d} LJ`, async () => {
+      await page.evaluate(([i, dd]) => { window.__map.select(null); window.__map.flyTo(i, { distance: dd }); }, [id, d]);
+      await settle(page); await sleep(500);
+      await allLabelsClear(page, id);
+    });
+  }
 }

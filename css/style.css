@@ -50,7 +50,6 @@ button:focus-visible, input:focus-visible, a:focus-visible, canvas:focus-visible
   position: absolute; left: 0; top: 0; white-space: nowrap; font-size: 13px; font-weight: 600;
   text-transform: uppercase; color: var(--c, var(--ink)); line-height: 14px;
   text-shadow: 0 0 6px #000, 0 0 2px #000, 0 0 12px rgba(0,0,0,.9);
-  transition: opacity .25s;
 }
 .label.r1 { font-size: 15px; letter-spacing: .08em; }
 .label.r4 { font-size: 11px; font-weight: 400; color: color-mix(in srgb, var(--c) 70%, #fff 30%); }
