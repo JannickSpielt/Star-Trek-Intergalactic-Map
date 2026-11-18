@@ -65,6 +65,9 @@ Gewählt wurde **A**, weil es den gewünschten aufwendigen 3D-Effekt liefert und
 - 3D-Karte, ziehen/zoomen/drehen.
 - Alle 20 gesammelten Ideen sind gewünscht, gebaut in drei Etappen (unten).
 - Hoher optischer Anspruch, „gib dir Mühe“.
+- **Standard-Zeitpunkt der Karte: ca. 2375** (TNG/DS9/VOY-Ära, Ende des Dominion-Kriegs): Bajor frei,
+  Romulus existiert, Dominion zieht sich in den Gamma-Quadranten zurück, Voyager ist unterwegs.
+  Das Datenmodell bekommt schon in Etappe 1 ein optionales Epochen-Feld, genutzt wird es erst in Etappe 3.
 
 ## Funktionsumfang nach Etappen
 
