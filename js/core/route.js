@@ -14,9 +14,16 @@ export function buildPath(stops) {
   }
   for (const l of legs) { l.t0 /= total; l.t1 = l.t0 + l.w / total; }
   const tOfStop = i => (i <= 0 ? 0 : i >= stops.length - 1 ? 1 : legs[i].t0);
+  /** Anzahl erreichter Stationen (inklusive Start) bei Fortschritt t. */
+  const reachedStops = t => {
+    let n = 1;
+    for (let i = 1; i < stops.length; i++) if (tOfStop(i) <= t + 1e-9) n = i + 1;
+    return n;
+  };
   return {
     legs,
     tOfStop,
+    reachedStops,
     /** Position, aktuelle Station (Startpunkt der Etappe) und Sprung-Flag bei t ∈ [0,1]. */
     at(t) {
       t = Math.min(1, Math.max(0, t));

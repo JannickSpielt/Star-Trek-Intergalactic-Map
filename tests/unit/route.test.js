@@ -39,3 +39,10 @@ test('jumps are shortened in timeline so the flight is not dominated by them', (
 test('every stop has a year and an own description', () => {
   for (const s of VOYAGER.stops) { assert.match(String(s.year), /^23\d\d/); assert.ok(s.text.length >= 30, s.title); }
 });
+
+test('reachedStops counts the milestones the ship has passed', () => {
+  assert.equal(path.reachedStops(0), 1);
+  assert.equal(path.reachedStops(path.tOfStop(4)), 5);
+  assert.equal(path.reachedStops((path.tOfStop(4) + path.tOfStop(5)) / 2), 5);
+  assert.equal(path.reachedStops(1), VOYAGER.stops.length);
+});

@@ -70,15 +70,18 @@ const glowVertex = /* glsl */`
     vec4 mv = modelViewMatrix * vec4(position, 1.0);
     float px = size * uScale / max(-mv.z, 1.0);
     // sehr große Sprites weich ausblenden, damit sie am Bildrand nicht aufploppen
-    vAlpha = alpha * smoothstep(0.0, uFadeNear, -mv.z) * (1.0 - smoothstep(320.0, 880.0, px));
+    vAlpha = alpha * smoothstep(0.0, uFadeNear, -mv.z) * (1.0 - smoothstep(140.0, 250.0, px));
     vColor = color;
-    gl_PointSize = clamp(px, 0.0, 900.0);
+    gl_PointSize = clamp(px, 0.0, 256.0);
     gl_Position = projectionMatrix * mv;
   }`;
 const glowFragment = /* glsl */`
-  uniform sampler2D uTex; varying vec3 vColor; varying float vAlpha;
+  varying vec3 vColor; varying float vAlpha;
   void main(){
-    float a = texture2D(uTex, gl_PointCoord).a * vAlpha;
+    // runde, weiche Abblendung rein rechnerisch (kein Textur-Alpha, kein Quadrat möglich)
+    float r = length(gl_PointCoord - 0.5) * 2.0;
+    if (r >= 1.0) discard;
+    float a = (1.0 - smoothstep(0.0, 1.0, r)) * (1.0 - smoothstep(0.0, 1.0, r)) * vAlpha;
     gl_FragColor = vec4(vColor * a, a);
   }`;
 
@@ -182,8 +185,13 @@ export function createGalaxy(quality = 'high') {
   };
   const dustMat = glowMat(THREE.NormalBlending, 9000);
   dustMat.fragmentShader = /* glsl */`
-    uniform sampler2D uTex; varying vec3 vColor; varying float vAlpha;
-    void main(){ float a = texture2D(uTex, gl_PointCoord).a * vAlpha; gl_FragColor = vec4(vColor, a); }`;
+    varying vec3 vColor; varying float vAlpha;
+    void main(){
+      float r = length(gl_PointCoord - 0.5) * 2.0;
+      if (r >= 1.0) discard;
+      float a = (1.0 - smoothstep(0.0, 1.0, r)) * (1.0 - smoothstep(0.0, 1.0, r)) * vAlpha;
+      gl_FragColor = vec4(vColor, a);
+    }`;
   const nebula = mk(gp, gc, gs, ga, glowMat(THREE.AdditiveBlending, 6000));
   const dust = mk(dp, dc, ds, da, dustMat);
   dust.renderOrder = 1; nebula.renderOrder = 2;

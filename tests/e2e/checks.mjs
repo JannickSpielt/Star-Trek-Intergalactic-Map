@@ -226,6 +226,14 @@ export default async function ({ page, check, assert, sleep, settle, brightness,
     await page.click('#player-play');
     assert.equal(await page.evaluate(() => window.__map.journey.state().playing), false);
   });
+  await check('the ship is a 3D model and passed stops light up', async () => {
+    const st = await page.evaluate(() => window.__map.journey.state());
+    assert.equal(st.ship3d, true);
+    assert.ok(st.lit >= 1 && st.lit <= 14, `lit ${st.lit}`);
+    await page.evaluate(() => window.__map.journey.goToStop(8));
+    await sleep(200);
+    assert.equal(await page.evaluate(() => window.__map.journey.state().lit), 9);
+  });
   await check('scrubbing to a stop shows its year and title', async () => {
     await page.evaluate(() => window.__map.journey.goToStop(6));
     await sleep(300);

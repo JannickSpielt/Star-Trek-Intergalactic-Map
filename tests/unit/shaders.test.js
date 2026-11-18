@@ -20,3 +20,18 @@ test('point-size shaders guard against division by a zero depth', () => {
   const src = readFileSync(new URL('../../js/render/galaxy.js', import.meta.url), 'utf8');
   assert.ok(!/\/\s*-mv\.z/.test(src), 'divides by -mv.z without max()');
 });
+
+// Große Punkt-Sprites dürfen ihre Transparenz nicht aus einer Textur lesen: Wird die nicht
+// korrekt gelesen (z. B. Safari/Metal), entsteht ein hartes Quadrat. Rund wird es nur analytisch.
+test('glow and dust point sprites use an analytic round falloff, not a texture', () => {
+  const src = readFileSync(new URL('../../js/render/galaxy.js', import.meta.url), 'utf8');
+  assert.ok(!/texture2D\(\s*uTex\s*,\s*gl_PointCoord\s*\)/.test(src), 'samples uTex with gl_PointCoord');
+});
+
+test('point sprites stay below the portable size limit', () => {
+  const src = readFileSync(new URL('../../js/render/galaxy.js', import.meta.url), 'utf8');
+  for (const m of src.matchAll(/gl_PointSize\s*=\s*clamp\([^,]+,\s*[\d.]+\s*,\s*([\w.]+)\s*\)/g)) {
+    const v = parseFloat(m[1]);
+    if (!Number.isNaN(v)) assert.ok(v <= 256, `max point size ${v}`);
+  }
+});
