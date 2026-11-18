@@ -11,8 +11,8 @@ function rectFor(it, anchor) {
 
 const hit = (a, b, p) => a.x - p < b.x + b.w && b.x - p < a.x + a.w && a.y - p < b.y + b.h && b.y - p < a.y + a.h;
 
-export function layoutLabels(items, { width, height, pad = 4 }) {
-  const placed = [], out = [];
+export function layoutLabels(items, { width, height, pad = 4, blockers = [] }) {
+  const placed = [...blockers], out = [];
   const sorted = items.filter(i => i.visible).sort((a, b) => a.priority - b.priority);
   for (const it of sorted) {
     for (const anchor of ANCHORS) {

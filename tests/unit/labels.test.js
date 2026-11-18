@@ -53,3 +53,10 @@ test('rankVisible thresholds by camera distance', () => {
   assert.equal(rankVisible(3, 11000), true);
   assert.equal(rankVisible(2, 70000), false);
 });
+
+test('labels avoid blocker rectangles (e.g. region names)', () => {
+  const items = [{ id: 'a', x: 400, y: 300, w: 60, h: 14, priority: 1, visible: true }];
+  const blockers = [{ x: 380, y: 280, w: 200, h: 40 }];
+  const out = layoutLabels(items, { ...opts, blockers });
+  for (const l of out) assert.ok(!overlaps(rect(l, items), blockers[0]));
+});
