@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Galaktische Sternenkarte</title>
+  <meta name="description" content="Interaktive 3D-Karte der Milchstraße im Star-Trek-Universum: Quadranten, Großmächte, Planeten und Schauplätze aus Serien und Filmen. Inoffizielles Fanprojekt.">
+  <meta name="theme-color" content="#000000">
+  <meta property="og:title" content="Galaktische Sternenkarte">
+  <meta property="og:description" content="Die Milchstraße des Star-Trek-Universums als interaktive 3D-Karte.">
+  <meta property="og:image" content="docs/media/preview-galaxy.png">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='30' fill='%23000'/%3E%3Cpath d='M32 14c10 0 18 8 18 18-6-8-14-10-22-6' stroke='%23ff9c3a' stroke-width='5' fill='none' stroke-linecap='round'/%3E%3Cpath d='M32 50c-10 0-18-8-18-18 6 8 14 10 22 6' stroke='%2399ccff' stroke-width='5' fill='none' stroke-linecap='round'/%3E%3Ccircle cx='32' cy='32' r='5' fill='%23ffe7a8'/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Antonio:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js",
+        "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"
+      }
+    }
+  </script>
+</head>
+<body>
+  <div class="app" id="app">
+    <!-- 3D-Ansicht -->
+    <main class="stage" id="stage">
+      <canvas id="map" aria-label="Interaktive 3D-Karte der Galaxie"></canvas>
+      <div class="labels" id="labels" aria-hidden="true"></div>
+      <div class="vignette" aria-hidden="true"></div>
+    </main>
+
+    <!-- LCARS-inspirierter Rahmen -->
+    <header class="lc-top">
+      <div class="lc-elbow lc-elbow--top" aria-hidden="true"><span>47-0815</span></div>
+      <div class="lc-topbar">
+        <div class="lc-seg lc-seg--a" aria-hidden="true"></div>
+        <h1 class="lc-title">Galaktische Sternenkarte</h1>
+        <div class="lc-seg lc-seg--b" aria-hidden="true"></div>
+        <div class="lc-readout" id="readout-quadrant">Beta-Quadrant</div>
+        <div class="lc-seg lc-seg--c" aria-hidden="true"></div>
+        <div class="lc-readout lc-readout--dim" id="readout-era">Ära 2375</div>
+        <div class="lc-cap" aria-hidden="true"></div>
+      </div>
+    </header>
+
+    <nav class="lc-side" id="side" aria-label="Navigation">
+      <button class="lc-menu" id="menu-toggle" aria-expanded="false" aria-controls="side-panel">Menü</button>
+      <div class="lc-side-panel" id="side-panel">
+        <div class="lc-group-label">Ziele</div>
+        <div class="lc-buttons" id="bookmarks"></div>
+        <div class="lc-group-label lc-group-label--alt">Ebenen</div>
+        <div class="lc-buttons" id="layers"></div>
+        <div class="lc-side-fill" aria-hidden="true"><span class="lc-data" id="data-stream"></span></div>
+      </div>
+    </nav>
+
+    <footer class="lc-bottom">
+      <div class="lc-elbow lc-elbow--bottom" aria-hidden="true"><span>SK-2375</span></div>
+      <div class="lc-bottombar">
+        <div class="lc-readout lc-readout--mono" id="readout-coords">X 0 · Y 0</div>
+        <div class="lc-seg lc-seg--d" aria-hidden="true"></div>
+        <div class="lc-scale"><canvas id="scalebar" width="140" height="20"></canvas><span id="scale-label">—</span></div>
+        <div class="lc-seg lc-seg--e" aria-hidden="true"></div>
+        <div class="lc-readout lc-readout--dim" id="readout-dist">—</div>
+        <div class="lc-cap" aria-hidden="true"></div>
+      </div>
+    </footer>
+
+    <!-- Werkzeuge über der Karte -->
+    <div class="tools">
+      <div class="search" role="search">
+        <input id="search" type="search" placeholder="System, Planet, Station …" autocomplete="off" spellcheck="false" aria-label="Ort suchen" aria-controls="results" aria-expanded="false">
+        <ul id="results" role="listbox" aria-label="Suchergebnisse"></ul>
+      </div>
+    </div>
+
+    <div class="zoom" role="group" aria-label="Zoom">
+      <button id="zoom-in" aria-label="Hineinzoomen">+</button>
+      <button id="zoom-out" aria-label="Herauszoomen">−</button>
+      <button id="reset-view" aria-label="Ansicht ausrichten" title="Ausrichten">⟲</button>
+    </div>
+
+    <div class="minimap-wrap">
+      <canvas id="minimap" width="200" height="200" aria-label="Übersichtskarte – klicken zum Springen"></canvas>
+      <span class="minimap-label">Übersicht</span>
+    </div>
+
+    <!-- Infofenster -->
+    <aside class="info" id="info" aria-live="polite" aria-hidden="true">
+      <div class="info-grip" aria-hidden="true"></div>
+      <header class="info-head">
+        <div class="info-cap" aria-hidden="true"></div>
+        <h2 id="info-title">—</h2>
+        <button class="info-close" id="info-close" aria-label="Schließen">✕</button>
+      </header>
+      <div class="info-body" id="info-body"></div>
+    </aside>
+
+    <div class="tooltip" id="tooltip" role="tooltip"></div>
+    <div class="hint" id="hint">Ziehen = verschieben · Rechte Maustaste / Strg = drehen · Mausrad = zoomen</div>
+
+    <!-- Intro -->
+    <div class="intro" id="intro">
+      <div class="intro-inner">
+        <div class="intro-kicker">Stellare Kartografie · Milchstraße</div>
+        <div class="intro-title">Galaktische<br>Sternenkarte</div>
+        <div class="intro-bar"><span id="intro-progress"></span></div>
+        <div class="intro-status" id="intro-status">Initialisiere Sensorgitter …</div>
+        <button class="intro-skip" id="intro-skip">Überspringen</button>
+      </div>
+    </div>
+  </div>
+
+  <noscript><div class="no-webgl">Diese Karte benötigt JavaScript.</div></noscript>
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>
