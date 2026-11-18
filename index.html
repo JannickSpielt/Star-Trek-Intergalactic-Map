@@ -56,10 +56,14 @@
     <nav class="lc-side" id="side" aria-label="Navigation">
       <button class="lc-menu" id="menu-toggle" aria-expanded="false" aria-controls="side-panel">Menü</button>
       <div class="lc-side-panel" id="side-panel">
-        <div class="lc-group-label">Ziele</div>
-        <div class="lc-buttons" id="bookmarks"></div>
-        <div class="lc-group-label lc-group-label--alt">Ebenen</div>
-        <div class="lc-buttons" id="layers"></div>
+        <div class="lc-tabs" role="tablist" aria-label="Seitenleiste">
+          <button role="tab" id="tab-goals" aria-controls="bookmarks" aria-selected="true">Ziele</button>
+          <button role="tab" id="tab-powers" aria-controls="powers" aria-selected="false">Mächte</button>
+          <button role="tab" id="tab-layers" aria-controls="layers" aria-selected="false">Ebenen</button>
+        </div>
+        <div class="lc-buttons" id="bookmarks" role="tabpanel" aria-labelledby="tab-goals"></div>
+        <div class="lc-buttons lc-buttons--list" id="powers" role="tabpanel" aria-labelledby="tab-powers" hidden></div>
+        <div class="lc-buttons" id="layers" role="tabpanel" aria-labelledby="tab-layers" hidden></div>
         <div class="lc-side-fill" aria-hidden="true"><span class="lc-data" id="data-stream"></span></div>
       </div>
     </nav>

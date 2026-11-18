@@ -17,7 +17,10 @@ import { BOOKMARKS } from './data/shapes.js';
 import { createCameraState, cameraPosition, screenAxes, flyPath, applyZoom, applyRotate, applyPan, pinch, isClick } from './core/camera.js';
 import { distance as dist } from './core/coords.js';
 import { PLACES } from './data/places.js';
-import { FACTIONS } from './data/factions.js';
+import { FACTIONS, FACTION_INFO } from './data/factions.js';
+import { territoryAt } from './core/territory.js';
+import { TERRITORIES } from './data/shapes.js';
+import { quadrant } from './core/coords.js';
 
 const PLACE = Object.fromEntries(PLACES.map(p => [p.id, p]));
 const canvas = document.getElementById('map');
@@ -199,7 +202,13 @@ function start() {
     if (pointers.size < 2) gesture = null;
     if (drag && pointers.size === 0) {
       if (!drag.moved && e.type === 'pointerup' && isClick(drag.start, [e.clientX, e.clientY], performance.now() - drag.t0)) {
-        select(markers.pick(e.clientX, e.clientY, e.pointerType === 'touch' ? 24 : 14));
+        const id = markers.pick(e.clientX, e.clientY, e.pointerType === 'touch' ? 24 : 14);
+        select(id);
+        if (!id && map.layers.territories.visible) {
+          const g = groundAt(e.clientX, e.clientY);
+          const fid = g && territoryAt(g, TERRITORIES);
+          if (fid) map.showPower(fid);
+        }
       }
       drag = null;
       canvas.classList.remove('dragging');
@@ -249,6 +258,7 @@ function start() {
     on(ev, fn) { listeners[ev]?.push(fn); },
     onFrame(fn) { frameHooks.push(fn); },
     screenOf: id => markers.screenOf(id),
+    pickAt: (x, y) => markers.pick(x, y),
     groundAt,
     state: () => ({ ...cam, flying: !!flight, selected }),
     place: id => PLACE[id],
@@ -266,10 +276,19 @@ function start() {
   map.journey = createJourney({ el: document.getElementById('player'), route: voyager, map });
   const frameUi = createFrame({
     bookmarks: BOOKMARKS,
+    powers: TERRITORIES.map(t => ({ id: t.faction, name: FACTIONS[t.faction].name, short: FACTIONS[t.faction].short, color: FACTIONS[t.faction].color, quadrant: quadrant(t.center).slice(0, 1) }))
+      .filter(p => FACTION_INFO[p.id]),
+    onPower: fid => map.focusPower(fid),
     layers: overlays.layers,
     onBookmark: b => (b.journey ? map.journey.open() : flyTo(b.target, { distance: b.distance === 'fit' ? 125000 : b.distance, tilt: b.distance === 'fit' ? 0.78 : cam.tilt })),
   });
-  const info = createInfo({ onClose: () => select(null), onCenter: id => map.focus(id) });
+  const info = createInfo({ onClose: () => { select(null); info.hide(); }, onCenter: id => map.focus(id), onFocusPower: fid => map.focusPower(fid) });
+  map.showPower = fid => { select(null); info.showFaction(fid); document.body.classList.add('info-open'); };
+  map.focusPower = fid => {
+    const t = TERRITORIES.find(x => x.faction === fid);
+    if (t) flyTo(t.center, { distance: Math.max(t.rx, t.ry) * 5.5 });
+    map.showPower(fid);
+  };
   map.on('select', p => { info.show(p); document.body.classList.toggle('info-open', !!p); });
   createSearchUI(document.getElementById('search'), document.getElementById('results'), PLACES, id => map.focus(id));
   const minimap = createMinimap(document.getElementById('minimap'), { onJump: pos => flyTo(pos, { distance: Math.min(cam.distance, 30000) }) });

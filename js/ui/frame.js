@@ -14,8 +14,31 @@ const LAYER_DEFS = [
 
 const nice = v => { const p = Math.pow(10, Math.floor(Math.log10(v))); const m = v / p; return (m >= 5 ? 5 : m >= 2 ? 2 : 1) * p; };
 
-export function createFrame({ bookmarks, layers, onBookmark }) {
+export function createFrame({ bookmarks, layers, onBookmark, powers = [], onPower = () => {} }) {
   const side = document.getElementById('side');
+  // Reiter: immer nur eine Liste sichtbar
+  const tabs = [...document.querySelectorAll('.lc-tabs [role="tab"]')];
+  const selectTab = tab => {
+    for (const t of tabs) {
+      const on = t === tab;
+      t.setAttribute('aria-selected', String(on));
+      document.getElementById(t.getAttribute('aria-controls')).hidden = !on;
+    }
+  };
+  tabs.forEach(t => t.addEventListener('click', () => selectTab(t)));
+
+  const pw = document.getElementById('powers');
+  for (const p of powers) {
+    const btn = document.createElement('button');
+    btn.className = 'lc-btn'; btn.style.setProperty('--c', p.color);
+    btn.innerHTML = `<span class="q"></span><span class="n"></span>`;
+    btn.querySelector('.q').textContent = p.quadrant;
+    btn.querySelector('.n').textContent = p.short;
+    btn.title = p.name;
+    btn.addEventListener('click', () => { onPower(p.id); side.classList.remove('open'); });
+    pw.appendChild(btn);
+  }
+
   const menu = document.getElementById('menu-toggle');
   menu.addEventListener('click', () => {
     const open = side.classList.toggle('open');

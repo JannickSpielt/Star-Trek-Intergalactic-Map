@@ -47,10 +47,12 @@ export default async function ({ page, check, assert, sleep, settle, brightness,
     assert.ok(Math.hypot(t[0] - b[0], t[1] - b[1]) < 300, `off by ${Math.hypot(t[0] - b[0], t[1] - b[1])}`);
   });
   await check('layer toggle hides territories', async () => {
+    await page.click('#tab-layers');
     await page.click('#layers button:has-text("Reiche")');
     assert.equal(await page.evaluate(() => window.__map.layers.territories.visible), false);
     await page.click('#layers button:has-text("Reiche")');
     assert.equal(await page.evaluate(() => window.__map.layers.territories.visible), true);
+    await page.click('#tab-goals');
   });
   await check('status bar shows quadrant at Sol', async () => {
     await page.evaluate(() => window.__map.flyTo('sol'));
@@ -235,5 +237,31 @@ export default async function ({ page, check, assert, sleep, settle, brightness,
   await check('closing the player hides it', async () => {
     await page.click('#player-close');
     assert.equal(await page.$('#player.open'), null);
+  });
+
+  // ── Seitenleiste mit Reitern & Reichs-Infos ──
+  await check('sidebar shows one tab at a time', async () => {
+    await page.click('#tab-powers');
+    const vis = await page.evaluate(() => ['bookmarks', 'powers', 'layers'].map(id => getComputedStyle(document.getElementById(id)).display !== 'none'));
+    assert.deepEqual(vis, [false, true, false]);
+    assert.ok(await page.$$eval('#powers button', b => b.length) >= 20);
+  });
+  await check('choosing a power opens its info', async () => {
+    await page.click('#powers button:has-text("Borg")');
+    await page.waitForSelector('#info.open');
+    const txt = await page.textContent('#info');
+    assert.match(txt, /Borg-Kollektiv/); assert.match(txt, /Unikomplex/); assert.match(txt, /Delta/);
+  });
+  await check('clicking empty space inside the Federation opens the Federation info', async () => {
+    await page.click('#info-close');
+    await page.evaluate(() => window.__map.flyTo([-900, 26600], { distance: 9000, tilt: 0.3 }));
+    await settle(page); await sleep(400);
+    const p = await page.evaluate(() => { for (let y = 380; y < 460; y += 6) for (let x = 560; x < 720; x += 6) { const g = window.__map.groundAt(x, y); if (!window.__map.pickAt(x, y) && g) return { x, y }; } return null; });
+    assert.ok(p, 'no empty spot');
+    await page.mouse.click(p.x, p.y);
+    await page.waitForSelector('#info.open', { timeout: 4000 });
+    assert.match(await page.textContent('#info-title'), /Föderation/i);
+    await page.click('#info-close');
+    await page.click('#tab-goals');
   });
 }
