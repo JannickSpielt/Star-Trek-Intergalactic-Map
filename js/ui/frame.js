@@ -8,6 +8,7 @@ const LAYER_DEFS = [
   { key: 'regions', name: 'Anomalien', color: '#ff9c3a' },
   { key: 'wormhole', name: 'Wurmloch', color: '#99ccff' },
   { key: 'voyager', name: 'Voyager-Route', color: '#ffcc66' },
+  { key: 'landmarks', name: '3D-Objekte', color: '#99ccff' },
   { key: 'grid', name: 'Raster', color: '#9999ff' },
   { key: 'labels', name: 'Namen', color: '#d9a26b' },
 ];

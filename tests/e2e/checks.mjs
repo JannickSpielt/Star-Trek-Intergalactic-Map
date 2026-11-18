@@ -272,4 +272,16 @@ export default async function ({ page, check, assert, sleep, settle, brightness,
     await page.click('#info-close');
     await page.click('#tab-goals');
   });
+
+  // ── 3D-Wahrzeichen ──
+  await check('landmarks appear only when zoomed in', async () => {
+    assert.ok(await page.evaluate(() => window.__map.landmarks.count) >= 8);
+    await page.evaluate(() => { window.__map.select(null); window.__map.flyTo('ds9', { distance: 40000 }); });
+    await settle(page); await sleep(400);
+    assert.equal(await page.evaluate(() => window.__map.landmarks.visible('ds9')), false);
+    await page.evaluate(() => window.__map.flyTo('ds9', { distance: 600 }));
+    await settle(page); await sleep(800);
+    assert.equal(await page.evaluate(() => window.__map.landmarks.visible('ds9')), true);
+  });
+  await shot(page, '11-landmark-ds9');
 }

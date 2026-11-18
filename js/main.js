@@ -6,6 +6,7 @@ import { createOverlays } from './render/overlays.js';
 import { createMarkers } from './render/markers.js';
 import { createLabelLayer } from './ui/labels-dom.js';
 import { createRoute } from './render/route.js';
+import { createLandmarks } from './render/landmarks.js';
 import { createJourney } from './ui/journey.js';
 import { VOYAGER } from './data/routes.js';
 import { createFrame } from './ui/frame.js';
@@ -53,7 +54,7 @@ else {
 if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
   navigator.serviceWorker.register('./sw.js').then(() => navigator.serviceWorker.ready).then(async () => {
     // Alles, was diese Seite tatsächlich geladen hat (Module, three.js, Schriften), für offline sichern
-    const cache = await caches.open('sternenkarte-v2');
+    const cache = await caches.open('sternenkarte-v3');
     const ok = h => h === location.hostname || ['cdn.jsdelivr.net', 'fonts.googleapis.com', 'fonts.gstatic.com'].includes(h);
     const urls = performance.getEntriesByType('resource').map(r => new URL(r.name)).filter(u => ok(u.hostname));
     await Promise.all(urls.map(u => {
@@ -74,7 +75,9 @@ function start() {
   const markers = createMarkers(PLACES);
   const voyager = createRoute(VOYAGER);
   overlays.layers.voyager = voyager.group;
-  ctx.scene.add(galaxy.group, overlays.group, voyager.group, markers.group);
+  const landmarks = createLandmarks(PLACES);
+  overlays.layers.landmarks = landmarks.group;
+  ctx.scene.add(galaxy.group, overlays.group, voyager.group, landmarks.group, markers.group);
   // Stationsnamen nur bei geöffnetem Reise-Abspieler zeigen
   const routeLayer = { get visible() { return voyager.group.visible && document.body.classList.contains('journey-open'); } };
   const routeAnchors = voyager.anchors.map(a => ({ ...a, layer: routeLayer }));
@@ -259,6 +262,7 @@ function start() {
     onFrame(fn) { frameHooks.push(fn); },
     screenOf: id => markers.screenOf(id),
     pickAt: (x, y) => markers.pick(x, y),
+    landmarks: { get count() { return landmarks.count; }, visible: id => landmarks.visible(id) },
     groundAt,
     state: () => ({ ...cam, flying: !!flight, selected }),
     place: id => PLACE[id],
@@ -310,6 +314,7 @@ function start() {
     overlays.update(time, cam.distance);
     markers.update(ctx.camera, cam, W, H, time);
     voyager.update(ctx.camera, H, time);
+    landmarks.update(ctx.camera, cam, H, time);
     labels.update(ctx.camera, cam, W, H, pxPerLy, tmpV);
     for (const fn of frameHooks) fn(cam, time);
     ctx.render();

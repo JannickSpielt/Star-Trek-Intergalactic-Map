@@ -1,5 +1,5 @@
 /* Service Worker: macht die Karte nach dem ersten Besuch offline nutzbar. */
-const CACHE = 'sternenkarte-v2';
+const CACHE = 'sternenkarte-v3';
 const SHELL = ['./', './index.html', './css/style.css', './manifest.webmanifest', './icons/icon.svg', './icons/icon-192.png'];
 const CDN = ['cdn.jsdelivr.net', 'fonts.googleapis.com', 'fonts.gstatic.com'];
 const TIMEOUT_MS = 4000;
