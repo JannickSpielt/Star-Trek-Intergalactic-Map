@@ -78,6 +78,17 @@ try {
     assert.deepEqual(errs2, []);
   });
   await nogl.close();
+
+  // ── Final-Review #2: three.js nicht ladbar -> sichtbare Meldung statt endlosem Intro ──
+  const ctx3 = await browser.newContext();
+  await ctx3.route(/cdn\.jsdelivr\.net/, r => r.abort());
+  const p3 = await ctx3.newPage();
+  await p3.goto(URL);
+  await check('load failure shows an error instead of a stuck intro', async () => {
+    await p3.waitForSelector('.no-webgl', { state: 'visible', timeout: 15000 });
+    assert.match(await p3.textContent('.no-webgl'), /laden/i);
+  });
+  await ctx3.close();
 } finally {
   await browser.close();
   server.kill();

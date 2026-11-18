@@ -214,6 +214,7 @@ body.info-open .minimap-wrap { opacity: 0; transform: scale(.9); pointer-events:
 
 .no-webgl { position: fixed; inset: 0; z-index: 30; display: grid; place-content: center; text-align: center; padding: 24px; background: #000; color: var(--ink); }
 .no-webgl strong { font-size: 32px; color: var(--lc-orange); text-transform: uppercase; letter-spacing: .08em; }
+.no-webgl button { justify-self: center; margin-top: 8px; border: 0; border-radius: 20px; padding: 10px 26px; background: var(--lc-peach); color: #000; font: 600 16px var(--font); text-transform: uppercase; }
 .no-webgl p { max-width: 520px; font-family: system-ui, sans-serif; letter-spacing: 0; color: var(--ink-dim); line-height: 1.5; }
 
 /* ── Mobil ─────────────────────────────────────────────────────────── */

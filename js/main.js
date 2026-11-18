@@ -35,8 +35,13 @@ function showNoWebGL() {
   document.getElementById('intro')?.remove();
 }
 
+window.__booted = true;
+clearTimeout(window.__bootTimer);
 if (!hasWebGL()) showNoWebGL();
-else start();
+else {
+  try { start(); }
+  catch (err) { window.showLoadError?.(err); }
+}
 
 // Offline-Unterstützung / installierbare Web-App
 if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {

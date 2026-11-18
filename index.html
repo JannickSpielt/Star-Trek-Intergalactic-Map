@@ -122,6 +122,19 @@
   </div>
 
   <noscript><div class="no-webgl">Diese Karte benötigt JavaScript.</div></noscript>
-  <script type="module" src="js/main.js"></script>
+  <script>
+    // Notfall-Anzeige, falls die 3D-Module nicht laden (offline, CDN gesperrt, sehr alter Browser)
+    window.showLoadError = function (detail) {
+      if (document.querySelector('.no-webgl')) return;
+      var d = document.createElement('div');
+      d.className = 'no-webgl';
+      d.innerHTML = '<strong>Karte konnte nicht geladen werden</strong><p>Die 3D-Bibliothek ließ sich nicht laden. Prüfe deine Internetverbindung und lade die Seite neu. Ältere Browser werden eventuell nicht unterstützt.</p><button type="button" onclick="location.reload()">Neu laden</button>';
+      document.body.appendChild(d);
+      var intro = document.getElementById('intro'); if (intro) intro.remove();
+      if (detail) console.warn('Ladefehler:', detail);
+    };
+    window.__bootTimer = setTimeout(function () { if (!window.__booted) window.showLoadError('timeout'); }, 12000);
+  </script>
+  <script type="module" src="js/main.js" onerror="showLoadError('module')"></script>
 </body>
 </html>
