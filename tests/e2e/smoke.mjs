@@ -89,6 +89,21 @@ try {
     assert.match(await p3.textContent('.no-webgl'), /laden/i);
   });
   await ctx3.close();
+
+  // ── Final-Review #3: nach dem ersten Besuch offline nutzbar ──
+  const ctx4 = await browser.newContext();
+  const p4 = await ctx4.newPage();
+  await p4.goto(URL + '?nointro=1');
+  await ready(p4);
+  await p4.evaluate(() => navigator.serviceWorker.ready);
+  await p4.waitForFunction(() => window.__offlineReady === true, null, { timeout: 20000 }).catch(() => {});
+  await ctx4.setOffline(true);
+  await check('works offline after the first visit', async () => {
+    await p4.reload();
+    await ready(p4);
+    assert.equal(await p4.$('.no-webgl'), null);
+  });
+  await ctx4.close();
 } finally {
   await browser.close();
   server.kill();
