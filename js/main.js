@@ -45,7 +45,18 @@ else {
 
 // Offline-Unterstützung / installierbare Web-App
 if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
-  navigator.serviceWorker.register('./sw.js').catch(() => {});
+  navigator.serviceWorker.register('./sw.js').then(() => navigator.serviceWorker.ready).then(async () => {
+    // Alles, was diese Seite tatsächlich geladen hat (Module, three.js, Schriften), für offline sichern
+    const cache = await caches.open('sternenkarte-v2');
+    const ok = h => h === location.hostname || ['cdn.jsdelivr.net', 'fonts.googleapis.com', 'fonts.gstatic.com'].includes(h);
+    const urls = performance.getEntriesByType('resource').map(r => new URL(r.name)).filter(u => ok(u.hostname));
+    await Promise.all(urls.map(u => {
+      const key = u.origin === location.origin ? u.origin + u.pathname : u.href;
+      return fetch(u.href, { mode: u.origin === location.origin ? 'same-origin' : 'cors' })
+        .then(res => (res.ok ? cache.put(key, res) : null)).catch(() => null);
+    }));
+    window.__offlineReady = true;
+  }).catch(() => {});
 }
 
 function start() {
