@@ -62,7 +62,7 @@ function ramp(pal, t) {
 }
 
 /** Erzeugt eine abgerollte Oberflächentextur (Länge × Breite). */
-function surfaceMap(params, W = 256, H = 128) {
+function surfaceMap(params, W = 512, H = 256) {
   const n = makeNoise(params.seed), nc = makeNoise(params.seed ^ 0x9e3779b9);
   const pal = params.palette.map(hex);
   const data = new Float32Array(W * H * 5);
@@ -80,7 +80,7 @@ function surfaceMap(params, W = 256, H = 128) {
       } else if (st === 'ocean' || st === 'jungle') {
         const land = h > (st === 'ocean' ? 0.56 : 0.44);
         c = land ? ramp(pal, 0.55 + (h - 0.5) * 1.2) : ramp(pal, h * 0.55);
-        if (Math.abs(py) > 0.86) c = [235, 242, 248];
+        if (Math.abs(py) > 0.84 + n(px * 6, py * 6, pz * 6, 2) * 0.12) c = [235, 242, 248];
       } else if (st === 'ice') {
         c = ramp(pal, 0.35 + h * 0.7);
         const crack = Math.abs(n(px * 5, py * 5, pz * 5, 2));

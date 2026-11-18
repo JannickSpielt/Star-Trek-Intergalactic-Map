@@ -7,6 +7,9 @@ import { createMarkers } from './render/markers.js';
 import { createLabelLayer } from './ui/labels-dom.js';
 import { createFrame } from './ui/frame.js';
 import { createInfo } from './ui/info.js';
+import { createSearchUI } from './ui/search-ui.js';
+import { createMinimap } from './ui/minimap.js';
+import { runIntro } from './ui/intro.js';
 import { BOOKMARKS } from './data/shapes.js';
 import { createCameraState, cameraPosition, screenAxes, flyPath, applyZoom, applyRotate, applyPan, pinch, isClick } from './core/camera.js';
 import { distance as dist } from './core/coords.js';
@@ -76,7 +79,7 @@ function start() {
     if (!target) return false;
     const to = { ...cam, target: [...target], distance: opts.distance ?? (p ? focusDistance(p) : cam.distance), tilt: opts.tilt ?? cam.tilt, azimuth: opts.azimuth ?? cam.azimuth };
     const span = Math.log(Math.max(1, dist(cam.target, to.target)) + 1) + Math.abs(Math.log(to.distance / cam.distance));
-    flight = { path: flyPath(cam, to), t0: performance.now(), dur: Math.min(3200, 900 + span * 160) };
+    flight = { path: flyPath(cam, to), t0: performance.now(), dur: opts.duration ?? Math.min(3200, 900 + span * 160) };
     return true;
   }
 
@@ -208,10 +211,11 @@ function start() {
       const p = PLACE[id]; if (!p) return;
       const d = focusDistance(p);
       // Bei offenem Infofenster (Desktop) das Ziel nach links aus dem Fenster schieben
-      const shiftPx = W > 760 ? Math.min(230, W * 0.18) : 0;
-      const k = shiftPx * (2 * Math.tan((FOV * Math.PI) / 360) * d) / H;
-      const { right } = screenAxes(cam.azimuth);
-      flyTo([p.pos[0] + right[0] * k, p.pos[1] + right[1] * k], { distance: d });
+      // Desktop: Fenster rechts -> Ziel nach links; Handy: Bottom-Sheet -> Ziel nach oben
+      const perPx = (2 * Math.tan((FOV * Math.PI) / 360) * d) / H;
+      const { right, up } = screenAxes(cam.azimuth);
+      const [sx, sy] = W > 760 ? [Math.min(230, W * 0.18), 0] : [0, -H * 0.27];
+      flyTo([p.pos[0] + (right[0] * sx + up[0] * sy) * perPx, p.pos[1] + (right[1] * sx + up[1] * sy) * perPx], { distance: d });
     },
     on(ev, fn) { listeners[ev]?.push(fn); },
     onFrame(fn) { frameHooks.push(fn); },
@@ -219,6 +223,7 @@ function start() {
     groundAt,
     state: () => ({ ...cam, flying: !!flight, selected }),
     place: id => PLACE[id],
+    setCamera(c) { cam = createCameraState(c); flight = null; },
   };
   window.__map = map;
 
@@ -228,7 +233,11 @@ function start() {
     onBookmark: b => flyTo(b.target, { distance: b.distance === 'fit' ? 125000 : b.distance, tilt: b.distance === 'fit' ? 0.78 : cam.tilt }),
   });
   const info = createInfo({ onClose: () => select(null), onCenter: id => map.focus(id) });
-  map.on('select', p => info.show(p));
+  map.on('select', p => { info.show(p); document.body.classList.toggle('info-open', !!p); });
+  createSearchUI(document.getElementById('search'), document.getElementById('results'), PLACES, id => map.focus(id));
+  const minimap = createMinimap(document.getElementById('minimap'), { onJump: pos => flyTo(pos, { distance: Math.min(cam.distance, 30000) }) });
+  map.onFrame(c => minimap.update(c, c.distance * Math.tan((FOV * Math.PI) / 360) * (W / H)));
+  runIntro(map, { target: [0, 4000], distance: 125000, azimuth: 0, tilt: 0.78 });
   map.onFrame(c => frameUi.setStatus({ target: c.target, pxPerLy: pxPerLy(c.target), distance: c.distance }));
 
   /* ── Render-Schleife ── */

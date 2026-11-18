@@ -150,6 +150,8 @@ button:focus-visible, input:focus-visible, a:focus-visible, canvas:focus-visible
 
 .minimap-wrap { position: fixed; z-index: 6; right: 18px; bottom: calc(var(--bottom-h) + 18px); width: 200px; height: 200px; border-radius: 50%;
   box-shadow: 0 0 0 1px var(--line), 0 0 0 6px rgba(0,0,0,.5), 0 0 0 7px rgba(255,204,153,.12); overflow: hidden; background: #000; }
+.minimap-wrap { transition: opacity .35s, transform .35s var(--ease); }
+body.info-open .minimap-wrap { opacity: 0; transform: scale(.9); pointer-events: none; }
 #minimap { width: 100%; height: 100%; display: block; cursor: crosshair; }
 .minimap-label { position: absolute; left: 50%; bottom: 10px; transform: translateX(-50%); font-size: 10px; letter-spacing: .3em; color: var(--ink-faint); text-transform: uppercase; pointer-events: none; }
 

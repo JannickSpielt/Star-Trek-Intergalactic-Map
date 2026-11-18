@@ -130,7 +130,7 @@ export function createOverlays() {
     const outline = lineOf(pts, new THREE.Color(f.color), 0.9, true);
     territories.add(fill, edge, outline);
     timed.push(fm);
-    anchors.push({ kind: 'territory', faction: t.faction, text: f.name, pos: t.center, size: Math.max(t.rx, t.ry) });
+    if (Math.max(t.rx, t.ry) >= 300) anchors.push({ kind: 'territory', faction: t.faction, text: f.name, pos: t.center, size: Math.max(t.rx, t.ry) });
   }
 
   // Grenzbänder

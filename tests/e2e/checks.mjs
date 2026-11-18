@@ -1,5 +1,5 @@
 // Zusätzliche E2E-Prüfungen, nach Task gruppiert.
-export default async function ({ page, check, assert, sleep, settle, brightness, shot }) {
+export default async function ({ page, check, assert, sleep, settle, brightness, shot, browser, openPage, ready, devices }) {
   // ── Task 7: Overlays ──
   await check('overlay layers exist', async () => {
     const keys = await page.evaluate(() => Object.keys(window.__map.layers).sort());
@@ -79,4 +79,60 @@ export default async function ({ page, check, assert, sleep, settle, brightness,
     await page.click('#info-close');
     assert.equal(await page.evaluate(() => window.__map.state().selected), null);
   });
+
+  // ── Task 11: Suche, Mini-Map, Mobil ──
+  await check('search "kronos" + Enter selects Qo\'noS', async () => {
+    await page.fill('#search', 'kronos');
+    await page.waitForSelector('#results.open li');
+    await page.press('#search', 'Enter');
+    await sleep(200);
+    assert.equal(await page.evaluate(() => window.__map.state().selected), 'qonos');
+  });
+  await check('minimap click top-left jumps into the Gamma quadrant', async () => {
+    await page.evaluate(() => window.__map.select(null));
+    const box = await (await page.$('#minimap')).boundingBox();
+    await page.mouse.click(box.x + box.width * 0.3, box.y + box.height * 0.3);
+    await sleep(200); await settle(page);
+    const t = await page.evaluate(() => window.__map.state().target);
+    assert.ok(t[0] < 0 && t[1] < 0, `target ${t}`);
+  });
+  await check('resizing keeps the canvas in sync', async () => {
+    await page.setViewportSize({ width: 800, height: 600 });
+    await sleep(400);
+    const s = await page.evaluate(() => { const c = document.getElementById('map'); return [c.width, c.height, devicePixelRatio, c.clientWidth, c.clientHeight]; });
+    assert.equal(s[3], 800); assert.equal(s[4], 600);
+    assert.ok(Math.abs(s[0] / s[1] - 800 / 600) < 0.01, `aspect ${s[0]}x${s[1]}`);
+    await page.setViewportSize({ width: 1280, height: 800 });
+  });
+
+  const m = await openPage(browser, { ...devices['iPhone 13'] });
+  await ready(m.page); await sleep(800);
+  await check('mobile: no horizontal scroll, menu collapsed', async () => {
+    const r = await m.page.evaluate(() => ({ sw: document.documentElement.scrollWidth, w: innerWidth, panel: getComputedStyle(document.getElementById('side-panel')).display }));
+    assert.ok(r.sw <= r.w, `scrollWidth ${r.sw} > ${r.w}`);
+    assert.equal(r.panel, 'none');
+  });
+  await check('mobile: info opens as bottom sheet', async () => {
+    await m.page.evaluate(() => window.__map.focus('bajor'));
+    await m.page.waitForSelector('#info.open'); await sleep(600);
+    const b = await (await m.page.$('#info')).boundingBox();
+    const vh = m.page.viewportSize().height;
+    assert.ok(Math.abs(b.y + b.height - vh) < 2, `bottom ${b.y + b.height} vs ${vh}`);
+  });
+  await shot(m.page, '05-mobil-bajor');
+  await check('mobile: pinch spreads fingers -> zooms in', async () => {
+    await m.page.evaluate(() => window.__map.select(null));
+    await sleep(500); await settle(m.page);
+    const d0 = await m.page.evaluate(() => window.__map.state().distance);
+    const cdp = await m.page.context().newCDPSession(m.page);
+    const tp = (type, pts) => cdp.send('Input.dispatchTouchEvent', { type, touchPoints: pts.map(([x, y], id) => ({ x, y, id })) });
+    await tp('touchStart', [[150, 400], [240, 400]]);
+    for (let i = 1; i <= 8; i++) await tp('touchMove', [[150 - i * 10, 400], [240 + i * 10, 400]]);
+    await tp('touchEnd', []);
+    await sleep(200);
+    const d1 = await m.page.evaluate(() => window.__map.state().distance);
+    assert.ok(d1 < d0 * 0.8, `distance ${d0} -> ${d1}`);
+  });
+  await check('mobile: no console errors', () => assert.deepEqual(m.errors, []));
+  await m.ctx.close();
 }
