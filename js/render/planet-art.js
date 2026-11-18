@@ -62,7 +62,7 @@ function ramp(pal, t) {
 }
 
 /** Erzeugt eine abgerollte Oberflächentextur (Länge × Breite). */
-function surfaceMap(params, W = 512, H = 256) {
+function surfaceMap(params, W = 384, H = 192) {
   const n = makeNoise(params.seed), nc = makeNoise(params.seed ^ 0x9e3779b9);
   const pal = params.palette.map(hex);
   const data = new Float32Array(W * H * 5);
@@ -111,71 +111,103 @@ function surfaceMap(params, W = 512, H = 256) {
   return { data, W, H };
 }
 
-/** Zeichnet einen rotierenden Planeten. Gibt eine Stop-Funktion zurück. */
-export function renderPlanet(canvas, params) {
-  const g = canvas.getContext('2d', { willReadFrequently: false });
-  const S = canvas.width, R = S * 0.36, cx = S / 2, cy = S / 2;
+/**
+ * Bereitet einen rotierenden Planeten vor: alles außer der Drehung wird einmal
+ * pro Pixel vorberechnet, ein Frame ist danach nur noch eine Tabellen-Abfrage.
+ */
+export function createPainter(params, S) {
+  const map = surfaceMap(params);
+  const R = S * 0.36, cx = S / 2, cy = S / 2;
   const accent = hex(params.palette[params.palette.length - 1]);
-  let raf = 0, stopped = false;
+  const L = [-0.55, -0.35, 0.76]; // Lichtrichtung
+  const base = new Uint8ClampedArray(S * S * 4); // Atmosphärensaum (statisch)
+  const idx = [], baseU = [], row = [], shade = [], night = [], rim = [];
+  const ct = Math.cos(params.tilt), st = Math.sin(params.tilt);
+  for (let y = 0; y < S; y++) {
+    for (let x = 0; x < S; x++) {
+      const nx = (x - cx) / R, ny = (y - cy) / R, rr = nx * nx + ny * ny;
+      const o = (y * S + x) * 4;
+      if (rr > 1) {
+        const e = Math.sqrt(rr) - 1;
+        if (e < 0.09 && params.style !== 'barren') {
+          const a = Math.pow(1 - e / 0.09, 2) * 0.55;
+          const lit = Math.max(0, (-nx * L[0] - ny * L[1]) / Math.sqrt(rr)) * 0.8 + 0.2;
+          base[o] = 140 + accent[0] * 0.45; base[o + 1] = 170 + accent[1] * 0.3; base[o + 2] = 255; base[o + 3] = a * 255 * lit;
+        }
+        continue;
+      }
+      const nz = Math.sqrt(1 - rr);
+      const ty = ny * ct - nx * st, tx = nx * ct + ny * st;
+      const lat = Math.asin(Math.max(-1, Math.min(1, -ty))), lon = Math.atan2(tx, nz);
+      const v = lat / Math.PI + 0.5;
+      const lam = Math.max(0, nx * L[0] + ny * L[1] + nz * L[2]);
+      idx.push(o);
+      baseU.push(lon / (Math.PI * 2));
+      row.push(Math.min(map.H - 1, Math.floor(v * map.H)) * map.W);
+      shade.push(0.06 + lam * 1.05);
+      night.push(1 - Math.min(1, lam * 4));
+      rim.push(Math.pow(1 - nz, 3) * 0.45);
+    }
+  }
+  const n = idx.length;
+  const I = Int32Array.from(idx), U = Float32Array.from(baseU), RW = Int32Array.from(row);
+  const SH = Float32Array.from(shade), NI = Float32Array.from(night), RM = Float32Array.from(rim);
+  const D = map.data, W = map.W;
+  return {
+    size: S, radius: R,
+    /** Schreibt einen Frame (Drehwinkel rot in Radiant) in data (RGBA, S×S). */
+    frame(rot, data) {
+      data.set(base);
+      const off = rot / (Math.PI * 2);
+      for (let k = 0; k < n; k++) {
+        let u = U[k] + off; u -= Math.floor(u);
+        const mi = (RW[k] + ((u * W) | 0)) * 5;
+        const cloud = D[mi + 3], emit = D[mi + 4] * NI[k], sh = SH[k], rm = RM[k];
+        const r = D[mi] + (245 - D[mi]) * cloud, g = D[mi + 1] + (248 - D[mi + 1]) * cloud, b = D[mi + 2] + (255 - D[mi + 2]) * cloud;
+        const o = I[k];
+        data[o] = r * sh + emit * 255 + rm * 120;
+        data[o + 1] = g * sh + emit * 190 + rm * 160;
+        data[o + 2] = b * sh + emit * 90 + rm * 255;
+        data[o + 3] = 255;
+      }
+    },
+  };
+}
+
+/** Zeichnet einen rotierenden Planeten (≈30 fps, bei reduzierter Bewegung still). Gibt eine Stop-Funktion zurück. */
+export function renderPlanet(canvas, params) {
+  const css = canvas.clientWidth || 200;
+  const S = Math.round(Math.min(360, css * Math.min(2, window.devicePixelRatio || 1)));
+  canvas.width = canvas.height = S;
+  const g = canvas.getContext('2d');
+  const still = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+  let raf = 0, stopped = false, last = 0;
 
   if (['station', 'wormhole', 'nebula', 'debris'].includes(params.style)) {
     const t0 = performance.now();
-    const loop = () => {
+    const loop = now => {
       if (stopped) return;
-      drawSpecial(g, S, params, (performance.now() - t0) / 1000);
-      raf = requestAnimationFrame(loop);
+      if (now - last > 33) { last = now; drawSpecial(g, S, params, still ? 0 : (now - t0) / 1000); }
+      if (!still) raf = requestAnimationFrame(loop);
     };
-    loop();
+    loop(performance.now() + 100);
     return () => { stopped = true; cancelAnimationFrame(raf); };
   }
 
-  const map = surfaceMap(params);
+  const painter = createPainter(params, S);
   const img = g.createImageData(S, S);
-  const L = [-0.55, -0.35, 0.76]; // Lichtrichtung
   const t0 = performance.now();
-  const draw = () => {
+  const draw = now => {
     if (stopped) return;
-    const rot = ((performance.now() - t0) / 1000) * 0.12;
-    const d = img.data;
-    d.fill(0);
-    for (let y = 0; y < S; y++) {
-      for (let x = 0; x < S; x++) {
-        const nx = (x - cx) / R, ny = (y - cy) / R, rr = nx * nx + ny * ny;
-        const o = (y * S + x) * 4;
-        if (rr > 1) {
-          // Atmosphärensaum
-          const e = Math.sqrt(rr) - 1;
-          if (e < 0.09 && params.style !== 'barren') {
-            const a = Math.pow(1 - e / 0.09, 2) * 0.55;
-            const lit = Math.max(0, (-nx * L[0] - ny * L[1]) / Math.sqrt(rr)) * 0.8 + 0.2;
-            d[o] = 140 + accent[0] * 0.45; d[o + 1] = 170 + accent[1] * 0.3; d[o + 2] = 255; d[o + 3] = a * 255 * lit;
-          }
-          continue;
-        }
-        const nz = Math.sqrt(1 - rr);
-        // Achsneigung
-        const ty = ny * Math.cos(params.tilt) - nx * Math.sin(params.tilt), tx = nx * Math.cos(params.tilt) + ny * Math.sin(params.tilt);
-        const lat = Math.asin(-ty), lon = Math.atan2(tx, nz) + rot;
-        const u = ((lon / (Math.PI * 2)) % 1 + 1) % 1, v = lat / Math.PI + 0.5;
-        const mi = (Math.min(map.H - 1, Math.floor(v * map.H)) * map.W + Math.min(map.W - 1, Math.floor(u * map.W))) * 5;
-        let r = map.data[mi], gg = map.data[mi + 1], b = map.data[mi + 2];
-        const cloud = map.data[mi + 3], emit = map.data[mi + 4];
-        r += (245 - r) * cloud; gg += (248 - gg) * cloud; b += (255 - b) * cloud;
-        const lam = Math.max(0, nx * L[0] + ny * L[1] + nz * L[2]);
-        const shade = 0.06 + lam * 1.05;
-        const night = (1 - Math.min(1, lam * 4)) * emit;
-        const rim = Math.pow(1 - nz, 3) * 0.45;
-        d[o] = Math.min(255, r * shade + night * 255 + rim * 120);
-        d[o + 1] = Math.min(255, gg * shade + night * 190 + rim * 160);
-        d[o + 2] = Math.min(255, b * shade + night * 90 + rim * 255);
-        d[o + 3] = 255;
-      }
+    if (now - last > 33) {
+      last = now;
+      painter.frame(still ? 0 : ((now - t0) / 1000) * 0.12, img.data);
+      g.putImageData(img, 0, 0);
+      if (params.rings) drawRings(g, S, painter.radius, params);
     }
-    g.putImageData(img, 0, 0);
-    if (params.rings) drawRings(g, S, R, params);
-    raf = requestAnimationFrame(draw);
+    if (!still) raf = requestAnimationFrame(draw);
   };
-  draw();
+  draw(performance.now() + 100);
   return () => { stopped = true; cancelAnimationFrame(raf); };
 }
 
