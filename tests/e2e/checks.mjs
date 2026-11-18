@@ -37,4 +37,25 @@ export default async function ({ page, check, assert, sleep, settle, brightness,
     await sleep(200);
     assert.equal(await page.evaluate(() => window.__map.state().selected), null);
   });
+
+  // ── Task 9: Rahmen & Navigation ──
+  await check('bookmark flies to Bajor', async () => {
+    await page.click('#bookmarks button:has-text("Bajor")');
+    await sleep(200); await settle(page);
+    const t = await page.evaluate(() => window.__map.state().target);
+    const b = await page.evaluate(() => window.__map.place('bajor').pos);
+    assert.ok(Math.hypot(t[0] - b[0], t[1] - b[1]) < 300, `off by ${Math.hypot(t[0] - b[0], t[1] - b[1])}`);
+  });
+  await check('layer toggle hides territories', async () => {
+    await page.click('#layers button:has-text("Reiche")');
+    assert.equal(await page.evaluate(() => window.__map.layers.territories.visible), false);
+    await page.click('#layers button:has-text("Reiche")');
+    assert.equal(await page.evaluate(() => window.__map.layers.territories.visible), true);
+  });
+  await check('status bar shows quadrant at Sol', async () => {
+    await page.evaluate(() => window.__map.flyTo('sol'));
+    await settle(page); await sleep(300);
+    assert.match(await page.textContent('#readout-quadrant'), /Beta/);
+    assert.match(await page.textContent('#scale-label'), /LJ/);
+  });
 }

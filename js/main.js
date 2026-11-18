@@ -5,6 +5,8 @@ import { createGalaxy } from './render/galaxy.js';
 import { createOverlays } from './render/overlays.js';
 import { createMarkers } from './render/markers.js';
 import { createLabelLayer } from './ui/labels-dom.js';
+import { createFrame } from './ui/frame.js';
+import { BOOKMARKS } from './data/shapes.js';
 import { createCameraState, cameraPosition, screenAxes, flyPath, applyZoom, applyRotate, applyPan, pinch, isClick } from './core/camera.js';
 import { distance as dist } from './core/coords.js';
 import { PLACES } from './data/places.js';
@@ -209,6 +211,13 @@ function start() {
     place: id => PLACE[id],
   };
   window.__map = map;
+
+  const frameUi = createFrame({
+    bookmarks: BOOKMARKS,
+    layers: overlays.layers,
+    onBookmark: b => flyTo(b.target, { distance: b.distance === 'fit' ? 125000 : b.distance, tilt: b.distance === 'fit' ? 0.78 : cam.tilt }),
+  });
+  map.onFrame(c => frameUi.setStatus({ target: c.target, pxPerLy: pxPerLy(c.target), distance: c.distance }));
 
   /* ── Render-Schleife ── */
   const clock = new THREE.Clock();
