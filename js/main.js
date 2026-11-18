@@ -5,6 +5,9 @@ import { createGalaxy } from './render/galaxy.js';
 import { createOverlays } from './render/overlays.js';
 import { createMarkers } from './render/markers.js';
 import { createLabelLayer } from './ui/labels-dom.js';
+import { createRoute } from './render/route.js';
+import { createJourney } from './ui/journey.js';
+import { VOYAGER } from './data/routes.js';
 import { createFrame } from './ui/frame.js';
 import { createInfo } from './ui/info.js';
 import { createSearchUI } from './ui/search-ui.js';
@@ -66,8 +69,13 @@ function start() {
   const galaxy = createGalaxy(quality);
   const overlays = createOverlays();
   const markers = createMarkers(PLACES);
-  ctx.scene.add(galaxy.group, overlays.group, markers.group);
-  const labels = createLabelLayer(document.getElementById('labels'), markers, overlays.anchors);
+  const voyager = createRoute(VOYAGER);
+  overlays.layers.voyager = voyager.group;
+  ctx.scene.add(galaxy.group, overlays.group, voyager.group, markers.group);
+  // Stationsnamen nur bei geöffnetem Reise-Abspieler zeigen
+  const routeLayer = { get visible() { return voyager.group.visible && document.body.classList.contains('journey-open'); } };
+  const routeAnchors = voyager.anchors.map(a => ({ ...a, layer: routeLayer }));
+  const labels = createLabelLayer(document.getElementById('labels'), markers, [...overlays.anchors, ...routeAnchors]);
 
   let cam = createCameraState({ target: [0, 4000], distance: 125000, azimuth: 0, tilt: 0.78 });
   let W = 1, H = 1;
@@ -245,13 +253,21 @@ function start() {
     state: () => ({ ...cam, flying: !!flight, selected }),
     place: id => PLACE[id],
     setCamera(c) { cam = createCameraState(c); flight = null; },
+    /** Kamera weich einem Punkt folgen lassen (Reise-Abspieler). instant: sofort springen. */
+    follow(pos, distance, instant) {
+      flight = null;
+      const k = instant ? 1 : 0.07;
+      cam = { ...cam, target: [cam.target[0] + (pos[0] - cam.target[0]) * k, cam.target[1] + (pos[1] - cam.target[1]) * k] };
+      if (distance) cam.distance = Math.exp(Math.log(cam.distance) + (Math.log(distance) - Math.log(cam.distance)) * k * 0.6);
+    },
   };
   window.__map = map;
 
+  map.journey = createJourney({ el: document.getElementById('player'), route: voyager, map });
   const frameUi = createFrame({
     bookmarks: BOOKMARKS,
     layers: overlays.layers,
-    onBookmark: b => flyTo(b.target, { distance: b.distance === 'fit' ? 125000 : b.distance, tilt: b.distance === 'fit' ? 0.78 : cam.tilt }),
+    onBookmark: b => (b.journey ? map.journey.open() : flyTo(b.target, { distance: b.distance === 'fit' ? 125000 : b.distance, tilt: b.distance === 'fit' ? 0.78 : cam.tilt })),
   });
   const info = createInfo({ onClose: () => select(null), onCenter: id => map.focus(id) });
   map.on('select', p => { info.show(p); document.body.classList.toggle('info-open', !!p); });
@@ -274,6 +290,7 @@ function start() {
     galaxy.update(H, FOV, time);
     overlays.update(time, cam.distance);
     markers.update(ctx.camera, cam, W, H, time);
+    voyager.update(ctx.camera, H, time);
     labels.update(ctx.camera, cam, W, H, pxPerLy, tmpV);
     for (const fn of frameHooks) fn(cam, time);
     ctx.render();

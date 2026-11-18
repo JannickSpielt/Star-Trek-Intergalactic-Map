@@ -193,4 +193,47 @@ export default async function ({ page, check, assert, sleep, settle, brightness,
   });
   await shot(page, '06-sol-nah');
   await check('no label overlaps right at Sol', async () => { await allLabelsClear(page, 'sol-nah'); });
+
+  // ── Position angenähert ──
+  await check('info shows whether a position is approximate', async () => {
+    await page.evaluate(() => window.__map.focus('qonos'));
+    await page.waitForSelector('#info.open'); await sleep(300);
+    assert.match(await page.textContent('#info'), /angenähert/);
+    await page.evaluate(() => window.__map.focus('vulcan'));
+    await sleep(500);
+    assert.match(await page.textContent('#info'), /Canon/);
+    await page.click('#info-close');
+  });
+
+  // ── Voyagers Heimreise ──
+  await check('voyager route layer exists', async () => {
+    assert.ok(await page.evaluate(() => !!window.__map.layers.voyager));
+  });
+  await check('Voyager bookmark opens the journey player', async () => {
+    await page.click('#bookmarks button:has-text("Voyager")');
+    await page.waitForSelector('#player.open', { timeout: 5000 });
+    assert.match(await page.textContent('#player'), /Fürsorger/);
+  });
+  await check('playing moves the ship along the route', async () => {
+    const t0 = await page.evaluate(() => window.__map.journey.state().t);
+    await page.click('#player-play');
+    await sleep(2500);
+    const s1 = await page.evaluate(() => window.__map.journey.state());
+    assert.ok(s1.t > t0 + 0.005, `t ${t0} -> ${s1.t}`);
+    assert.ok(s1.playing);
+    await page.click('#player-play');
+    assert.equal(await page.evaluate(() => window.__map.journey.state().playing), false);
+  });
+  await check('scrubbing to a stop shows its year and title', async () => {
+    await page.evaluate(() => window.__map.journey.goToStop(6));
+    await sleep(300);
+    const txt = await page.textContent('#player');
+    assert.match(txt, /Krenim/); assert.match(txt, /2374/);
+  });
+  await sleep(1500);
+  await shot(page, '07-voyager');
+  await check('closing the player hides it', async () => {
+    await page.click('#player-close');
+    assert.equal(await page.$('#player.open'), null);
+  });
 }

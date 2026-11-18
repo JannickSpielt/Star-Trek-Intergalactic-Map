@@ -91,7 +91,7 @@ const cloudMat = color => new THREE.ShaderMaterial({
       vec2 c = vUv - 0.5; float r = length(c) * 2.0;
       float t = uTime * 0.05;
       float f = fbm(c * 4.0 + uSeed + vec2(t, -t)) * 0.65 + fbm(c * 9.0 - uSeed + t) * 0.35;
-      float a = smoothstep(1.0, 0.15, r) * smoothstep(0.25, 0.75, f) * 0.55;
+      float a = (1.0 - smoothstep(0.15, 1.0, r)) * smoothstep(0.25, 0.75, f) * 0.55;
       gl_FragColor = vec4(uColor * a, a);
     }`,
 });

@@ -58,3 +58,10 @@ test('neighbours of Sol sit at their canon distances (light years)', () => {
 test('Sol-system places only appear when zoomed right in (rank 5)', () => {
   for (const id of ['mars', 'jupiter', 'alphacen', 'wolf359']) assert.equal(byId[id].rank, 5, id);
 });
+
+test('more places, each marked whether its position is canon-exact', () => {
+  assert.ok(PLACES.length >= 85, `only ${PLACES.length}`);
+  for (const p of PLACES) assert.equal(typeof p.approx, 'boolean', p.id);
+  for (const id of ['sol', 'alphacen', 'wolf359', 'tellar', 'vulcan']) assert.equal(byId[id].approx, false, id);
+  for (const id of ['qonos', 'romulus', 'ocampa', 'deneva']) assert.equal(byId[id].approx, true, id);
+});

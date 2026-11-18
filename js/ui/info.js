@@ -44,6 +44,7 @@ export function createInfo({ onClose, onCenter }) {
         <dt>Quadrant</dt><dd>${quadrant(p.pos)}-Quadrant</dd>
         <dt>Entfernung Sol</dt><dd>${p.id === 'sol' ? '—' : formatLy(distance(p.pos, SOL))}</dd>
         <dt>Koordinaten</dt><dd>X ${rel[0].toLocaleString('de-DE')} · Y ${rel[1].toLocaleString('de-DE')}</dd>
+        <dt>Position</dt><dd>${p.approx ? '<span class="approx">angenähert, nicht genau bekannt</span>' : 'nach Canon-Angaben'}</dd>
       </dl>
       <p class="desc">${esc(p.desc)}</p>
       <div class="badges">${p.series.map(s => `<span class="badge" title="${SERIES[s] ?? s}">${s}</span>`).join('')}</div>
@@ -51,7 +52,7 @@ export function createInfo({ onClose, onCenter }) {
         <button type="button" class="center-btn">Zentrieren</button>
         <a class="ma-link" href="${ma}" target="_blank" rel="noopener">Memory Alpha ↗</a>
       </div>
-      <p class="info-note">Bild: eigene, computergenerierte Darstellung. Position auf der Karte angenähert.</p>`;
+      <p class="info-note">Bild: eigene, computergenerierte Darstellung.${p.approx ? ' Der genaue Standort ist im Canon nicht festgelegt, die Karte zeigt eine plausible Lage.' : ''}</p>`;
     body.querySelector('.center-btn').addEventListener('click', () => onCenter(p.id));
     body.scrollTop = 0;
     el.classList.add('open'); el.setAttribute('aria-hidden', 'false');

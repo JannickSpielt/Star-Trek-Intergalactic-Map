@@ -10,8 +10,10 @@ const SY = 26000;
 const L = (x, y) => [x, SY + y];
 
 /** Kompakter Konstruktor: P(id, name, pos, type, faction, rank, art, series, ma, desc, aliases) */
+/** Orte, deren Position der Canon genau festlegt; alle anderen sind angenähert. */
+const EXACT = new Set(['sol', 'mars', 'jupiter', 'alphacen', 'wolf359', 'tellar', 'vulcan']);
 const P = (id, name, pos, type, faction, rank, art, series, ma, desc, aliases = []) =>
-  ({ id, name, pos, type, faction, rank, art, series, ma, desc, aliases });
+  ({ id, name, pos, type, faction, rank, art, series, ma, desc, aliases, approx: !EXACT.has(id) });
 
 export const PLACES = [
   // ─── Föderation ───────────────────────────────────────────────
@@ -163,16 +165,58 @@ export const PLACES = [
     'Zentrales Kommandogitter des Kollektivs im Unikomplex.', []),
   P('transwarp', 'Transwarp-Hub', [7200, -1200], 'station', 'bor', 2, 'station', ['VOY'], 'Transwarp-Hub',
     'Knotenpunkt des Borg-Transwarpnetzes. Voyager nutzte ihn 2378 für die Heimkehr und zerstörte ihn dabei.', ['Transwarp']),
-  P('krenim', 'Krenim-Heimat', [21000, -7600], 'capital', 'kre', 3, 'city', ['VOY'], 'Krenim',
+  P('krenim', 'Krenim-Heimat', [19200, -5800], 'capital', 'kre', 3, 'city', ['VOY'], 'Krenim',
     'Zentrum der Krenim. Ein Zeitwaffenschiff löschte hier ganze Völker aus der Geschichte aus.', ['Ein Jahr Hölle']),
-  P('hirogen', 'Hirogen-Relaisnetz', [18200, -5200], 'station', 'hir', 3, 'station', ['VOY'], 'Hirogen',
+  P('hirogen', 'Hirogen-Relaisnetz', [17300, -4300], 'station', 'hir', 3, 'station', ['VOY'], 'Hirogen',
     'Uraltes Kommunikationsnetz, über das Voyager erstmals wieder mit der Sternenflotte sprechen konnte.', ['Hirogen']),
-  P('malon', 'Malon-Raum', [15000, -3000], 'capital', 'mal', 4, 'lava', ['VOY'], 'Malon',
+  P('malon', 'Malon-Raum', [15400, -3200], 'capital', 'mal', 4, 'lava', ['VOY'], 'Malon',
     'Industriezentrum der Malon, die ihren giftigen Theta-Strahlungsabfall in fremden Regionen abladen.', []),
-  P('devore', 'Devore-Prime', [12500, -2100], 'capital', 'dev', 4, 'city', ['VOY'], 'Devore',
+  P('devore', 'Devore-Prime', [13100, -2300], 'capital', 'dev', 4, 'city', ['VOY'], 'Devore',
     'Heimat des Devore-Imperiums, das Telepathen erbarmungslos verfolgt.', []),
   P('brunali', 'Brunali-Welt', [19800, -11500], 'planet', 'ind', 4, 'barren', ['VOY'], 'Brunali',
     'Landwirtschaftliche Welt, die immer wieder von Borg-Angriffen heimgesucht wurde.', []),
+
+  // ─── Weitere Schauplätze (Positionen angenähert) ───────────────
+  P('deneva', 'Deneva', L(-650, 520), 'planet', 'fed', 4, 'ocean', ['TOS'], 'Deneva',
+    'Wohlhabende Kolonie, die von schwarmartigen Parasiten befallen wurde. Spocks Halbbruder Sam Kirk starb hier.', []),
+  P('ardana', 'Ardana', L(-820, -60), 'planet', 'fed', 4, 'city', ['TOS'], 'Ardana',
+    'Welt mit der schwebenden Wolkenstadt Stratos, in der die Oberschicht lebte, während die Troglyten im Bergwerk arbeiteten.', ['Stratos']),
+  P('capella', 'Capella IV', L(-260, 980), 'planet', 'ind', 4, 'desert', ['TOS'], 'Capella_IV',
+    'Heimat der kriegerischen Capellaner, deren Topalin-Vorkommen die Föderation für ihre Kolonien brauchte.', []),
+  P('janus', 'Janus VI', L(560, 240), 'planet', 'fed', 4, 'barren', ['TOS'], 'Janus_VI',
+    'Bergbaukolonie, in der die Horta lebte. Die Kumpel hielten sie für ein Monster, bis Spock mit ihr sprach.', ['Horta']),
+  P('eminiar', 'Eminiar VII', L(-1900, 1050), 'planet', 'ind', 4, 'city', ['TOS'], 'Eminiar_VII',
+    'Führte mit Vendikar einen Krieg nur per Computer. Die berechneten Opfer gingen anschließend freiwillig in Desintegrationskammern.', []),
+  P('organia', 'Organia', L(1650, -350), 'planet', 'ind', 3, 'barren', ['TOS', 'ENT'], 'Organia',
+    'Scheinbar rückständige Welt zwischen Föderation und Klingonen. Ihre körperlosen Bewohner zwangen beide Seiten 2267 zum Frieden.', ['Organianer']),
+  P('sherman', "Sherman's Planet", L(1450, -150), 'planet', 'fed', 4, 'jungle', ['TOS'], "Sherman's_Planet",
+    'Umstrittene Agrarwelt. Für ihre Entwicklung lagerte die Station K-7 Getreide, das die Tribbles auffraßen.', ['Station K-7', 'Tribbles']),
+  P('angelone', 'Angel One', L(-1350, 350), 'planet', 'ind', 4, 'ocean', ['TNG'], 'Angel_One',
+    'Matriarchalisch regierte Welt, auf der die Enterprise-D nach Überlebenden eines Frachters suchte.', []),
+  P('ligon', 'Ligon II', L(-1500, 950), 'planet', 'ind', 4, 'desert', ['TNG'], 'Ligon_II',
+    'Welt der Ligonianer, die einen seltenen Impfstoff besaßen und Natasha Yar zu einem Zweikampf zwangen.', []),
+  P('empoknor', 'Empok Nor', L(-3050, -1250), 'station', 'car', 4, 'station', ['DS9'], 'Empok_Nor',
+    'Verlassene Schwesterstation von Deep Space 9. O’Brien holte dort Ersatzteile und geriet in eine Falle.', []),
+  P('hatoria', "H'atoria", L(3000, -850), 'planet', 'kli', 4, 'storm', ['DS9'], "H'atoria",
+    'Klingonische Kolonie, auf der Worf und Martok im Dominion-Krieg Verstärkung sammelten.', []),
+  P('rator', 'Rator III', L(1300, -2700), 'planet', 'rom', 4, 'city', ['DS9', 'PIC'], 'Rator_III',
+    'Romulanische Welt, auf der nach dem Tod des Prätors die Führung des Imperiums neu sortiert wurde.', []),
+  P('chaltok', 'Chaltok IV', L(400, -2100), 'planet', 'rom', 4, 'barren', ['DS9'], 'Chaltok_IV',
+    'Romulanisches System, aus dem die Raumschiffe des Imperiums nach dem Eintritt in den Dominion-Krieg starteten.', []),
+  P('meridian', 'Meridian', [-36800, -25200], 'planet', 'ind', 4, 'jungle', ['DS9'], 'Meridian',
+    'Planet im Gamma-Quadranten, der nur alle sechzig Jahre für kurze Zeit in unserem Raum auftaucht.', []),
+  P('sikaris', 'Sikaris', [30500, -25000], 'planet', 'ind', 4, 'city', ['VOY'], 'Sikaris',
+    'Gastfreundliche, aber verschlossene Welt. Ihr Faltraum-Transporter hätte Voyager weit nach Hause bringen können.', []),
+  P('mokra', 'Mokra-Ordnung', [27800, -21200], 'planet', 'ind', 4, 'barren', ['VOY'], 'Mokra',
+    'Polizeistaat, in dem Janeway und Torres verhaftet wurden und der Widerstand ihnen half.', []),
+  P('akritiri', 'Akritiri', [23200, -13600], 'planet', 'ind', 4, 'barren', ['VOY'], 'Akritiri',
+    'Ihre Gefängnis-Satelliten hielten Kim und Paris fest, nachdem man sie eines Anschlags beschuldigt hatte.', []),
+  P('mari', 'Mari', [25600, -17200], 'planet', 'ind', 4, 'city', ['VOY'], 'Mari',
+    'Telepathische Gesellschaft, in der schon ein gewalttätiger Gedanke als Verbrechen gilt.', []),
+  P('quarra', 'Quarra', [8600, -1450], 'planet', 'ind', 3, 'city', ['VOY'], 'Quarra',
+    'Arbeitswelt, die fremde Schiffsbesatzungen ihrer Erinnerungen beraubt und in Fabriken einsetzt.', []),
+  P('nekritstation', 'Nekrit-Versorgungsstation', [26600, -19400], 'station', 'ind', 4, 'station', ['VOY'], 'Nekrit-Weite',
+    'Handelsposten am Rand der Nekrit-Weite, an dem Voyager Vorräte auffüllte, bevor sie in den Nebel flog.', []),
 
   // ─── Galaxisweit ───────────────────────────────────────────────
   P('shakaree', 'Sha Ka Ree', [0, 0], 'anomaly', 'ind', 2, 'barren', ['Filme'], 'Sha_Ka_Ree',

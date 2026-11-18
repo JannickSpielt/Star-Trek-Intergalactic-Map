@@ -7,6 +7,7 @@ const LAYER_DEFS = [
   { key: 'borders', name: 'Grenzen', color: '#cc99cc' },
   { key: 'regions', name: 'Anomalien', color: '#ff9c3a' },
   { key: 'wormhole', name: 'Wurmloch', color: '#99ccff' },
+  { key: 'voyager', name: 'Voyager-Route', color: '#ffcc66' },
   { key: 'grid', name: 'Raster', color: '#9999ff' },
   { key: 'labels', name: 'Namen', color: '#d9a26b' },
 ];

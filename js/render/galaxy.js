@@ -46,7 +46,7 @@ const starVertex = /* glsl */`
   varying vec3 vColor; varying float vAlpha;
   void main(){
     vec4 mv = modelViewMatrix * vec4(position, 1.0);
-    float px = size * uScale / -mv.z;
+    float px = size * uScale / max(-mv.z, 1.0);
     float tw = 0.82 + 0.18 * sin(uTime * 1.7 + phase * 40.0);
     vAlpha = clamp(px * 1.6, 0.42, 1.0) * tw;
     vColor = color;
@@ -58,8 +58,8 @@ const starFragment = /* glsl */`
   void main(){
     vec2 d = gl_PointCoord - 0.5; float r = length(d);
     if (r > 0.5) discard;
-    float a = smoothstep(0.5, 0.0, r);
-    gl_FragColor = vec4(vColor * a * vAlpha, a * vAlpha);
+    float a = 1.0 - smoothstep(0.0, 0.5, r);
+    gl_FragColor = vec4(min(vColor * a * vAlpha, vec3(4.0)), a * vAlpha);
   }`;
 
 const glowVertex = /* glsl */`
@@ -68,8 +68,9 @@ const glowVertex = /* glsl */`
   varying vec3 vColor; varying float vAlpha;
   void main(){
     vec4 mv = modelViewMatrix * vec4(position, 1.0);
-    float px = size * uScale / -mv.z;
-    vAlpha = alpha * smoothstep(0.0, uFadeNear, -mv.z);
+    float px = size * uScale / max(-mv.z, 1.0);
+    // sehr große Sprites weich ausblenden, damit sie am Bildrand nicht aufploppen
+    vAlpha = alpha * smoothstep(0.0, uFadeNear, -mv.z) * (1.0 - smoothstep(320.0, 880.0, px));
     vColor = color;
     gl_PointSize = clamp(px, 0.0, 900.0);
     gl_Position = projectionMatrix * mv;

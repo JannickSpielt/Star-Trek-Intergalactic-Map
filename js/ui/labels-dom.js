@@ -68,7 +68,7 @@ export function createLabelLayer(container, markers, anchors) {
       for (const { a, el } of anchorEls) {
         const s = project(camera, a.pos, w, h, v);
         let show = false, fs = 0;
-        if (s.ok) {
+        if (s.ok && (!a.layer || a.layer.visible)) {
           const span = (a.size || 0) * 2 * pxPerLy(a.pos);
           if (a.kind === 'quadrant') { show = camState.distance > 40000; fs = 22; }
           else if (a.kind === 'territory') { show = span > 90 && span < 2200; fs = Math.round(Math.max(13, Math.min(44, span / 9))); }

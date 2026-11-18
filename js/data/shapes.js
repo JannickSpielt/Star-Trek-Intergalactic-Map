@@ -22,10 +22,10 @@ export const TERRITORIES = [
   { faction: 'bor', center: [18500, -16500], rx: 11500, ry: 8500, rot: -0.5, seed: 12 },
   { faction: 'kaz', center: [32000, -27500], rx: 2400, ry: 1900, rot: 0.6, seed: 13 },
   { faction: 'vid', center: [29300, -23300], rx: 2100, ry: 1600, rot: 0.6, seed: 14 },
-  { faction: 'kre', center: [21000, -7600], rx: 2000, ry: 1400, rot: 0.2, seed: 16 },
-  { faction: 'hir', center: [17800, -4600], rx: 3600, ry: 1600, rot: 0.1, seed: 17 },
-  { faction: 'mal', center: [15000, -3000], rx: 1500, ry: 900, rot: 0, seed: 18 },
-  { faction: 'dev', center: [12500, -2100], rx: 1300, ry: 750, rot: 0, seed: 19 },
+  { faction: 'kre', center: [19300, -5900], rx: 1500, ry: 1000, rot: 0.2, seed: 16 },
+  { faction: 'hir', center: [17200, -4300], rx: 2800, ry: 1200, rot: 0.1, seed: 17 },
+  { faction: 'mal', center: [15400, -3200], rx: 1300, ry: 800, rot: 0, seed: 18 },
+  { faction: 'dev', center: [13100, -2300], rx: 1100, ry: 650, rot: 0, seed: 19 },
   { faction: 'tal', center: [33300, -28900], rx: 600, ry: 500, rot: 0, seed: 20 },
 ];
 
@@ -58,4 +58,5 @@ export const BOOKMARKS = [
   { name: 'Klingonen', target: L(2600, -600), distance: 4500, color: '#cc6666' },
   { name: 'Dominion', target: [-34500, -21000], distance: 30000, color: '#b98cff' },
   { name: 'Borg-Raum', target: [19000, -15000], distance: 42000, color: '#ffaa66' },
+  { name: 'Voyager', target: [22000, -15000], distance: 62000, color: '#ffcc66', journey: 'voyager' },
 ];
