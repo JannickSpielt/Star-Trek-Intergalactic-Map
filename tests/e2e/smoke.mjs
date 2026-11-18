@@ -27,7 +27,7 @@ async function openPage(browser, opts = {}) {
   const errors = [];
   page.on('pageerror', e => errors.push(e.message));
   page.on('console', m => { if (m.type() === 'error') errors.push(m.text()); });
-  await page.goto(URL + '?nointro=1');
+  await page.goto(URL + '?nointro=1&q=low');
   return { page, errors, ctx };
 }
 const ready = page => page.waitForFunction(() => window.__map && window.__map.ready, null, { timeout: 20000 });
@@ -83,7 +83,7 @@ try {
   const ctx3 = await browser.newContext();
   await ctx3.route(/cdn\.jsdelivr\.net/, r => r.abort());
   const p3 = await ctx3.newPage();
-  await p3.goto(URL);
+  await p3.goto(URL + '?q=low');
   await check('load failure shows an error instead of a stuck intro', async () => {
     await p3.waitForSelector('.no-webgl', { state: 'visible', timeout: 15000 });
     assert.match(await p3.textContent('.no-webgl'), /laden/i);
@@ -93,15 +93,18 @@ try {
   // ── Final-Review #3: nach dem ersten Besuch offline nutzbar ──
   const ctx4 = await browser.newContext();
   const p4 = await ctx4.newPage();
-  await p4.goto(URL + '?nointro=1');
+  await p4.goto(URL + '?nointro=1&q=low');
   await ready(p4);
   await p4.evaluate(() => navigator.serviceWorker.ready);
   await p4.waitForFunction(() => window.__offlineReady === true, null, { timeout: 20000 }).catch(() => {});
+  // Nur der Service-Worker-Cache darf helfen: HTTP-Cache leeren
+  const cdp4 = await ctx4.newCDPSession(p4);
+  await cdp4.send('Network.clearBrowserCache');
   await ctx4.setOffline(true);
   await check('works offline after the first visit', async () => {
     await p4.reload();
-    await ready(p4);
-    assert.equal(await p4.$('.no-webgl'), null);
+    await p4.waitForFunction(() => (window.__map && window.__map.ready) || document.querySelector('.no-webgl'), null, { timeout: 20000 });
+    assert.equal(await p4.$('.no-webgl'), null, 'error screen shown offline');
   });
   await ctx4.close();
 } finally {
