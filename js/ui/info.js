@@ -34,7 +34,8 @@ export function createInfo({ onClose, onCenter }) {
     el.style.setProperty('--c', f.color);
     title.textContent = p.name;
     const rel = [Math.round(p.pos[0] - SOL[0]), Math.round(SOL[1] - p.pos[1])];
-    const ma = `https://memory-alpha.fandom.com/de/wiki/${encodeURIComponent(p.ma.replace(/ /g, '_')).replace(/%27/g, "'")}`;
+    // Suche mit Direktsprung: öffnet die Seite, falls vorhanden, sonst die Trefferliste
+    const ma = `https://memory-alpha.fandom.com/de/wiki/Spezial:Suche?search=${encodeURIComponent(p.ma.replace(/_/g, ' '))}&go=Go`;
     body.innerHTML = `
       <div class="info-art"><div class="ring"></div><canvas width="400" height="400" aria-label="Darstellung von ${esc(p.name)}"></canvas></div>
       <span class="chip" style="--c:${f.color}">${esc(f.name)}</span>

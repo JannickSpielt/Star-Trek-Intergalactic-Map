@@ -103,6 +103,7 @@ export function createOverlays() {
   const mk = name => { const g = new THREE.Group(); g.name = name; group.add(g); layers[name] = g; return g; };
   const territories = mk('territories'), borders = mk('borders'), regions = mk('regions'), grid = mk('grid'), wormhole = mk('wormhole');
   const timed = [];
+  const fades = []; // Materialien, die beim Hineinzoomen zurücktreten
   const anchors = [];  // für HTML-Beschriftungen
 
   // Raster: Quadrantenachsen + Entfernungsringe
@@ -126,16 +127,20 @@ export function createOverlays() {
     const geo = new THREE.ShapeGeometry(shape, 4); geo.rotateX(Math.PI / 2);
     const fm = fillMat(f.color); fm.uniforms.uCell.value = Math.max(t.rx, t.ry) / 9;
     const fill = new THREE.Mesh(geo, fm);
-    const edge = new THREE.Mesh(ribbon(pts, Math.min(t.rx, t.ry) * 0.12, { closed: true, inward: true }), ribbonMat(f.color, { opacity: 0.55 }));
+    const em = ribbonMat(f.color, { opacity: 0.55 });
+    const edge = new THREE.Mesh(ribbon(pts, Math.min(t.rx, t.ry) * 0.12, { closed: true, inward: true }), em);
+    fades.push({ m: em, base: 0.55, size: Math.max(t.rx, t.ry) * 3 });
+    fades.push({ m: fm, base: 1, size: Math.max(t.rx, t.ry) * 1.2, uniform: 'uOpacity' });
     const outline = lineOf(pts, new THREE.Color(f.color), 0.9, true);
     territories.add(fill, edge, outline);
     timed.push(fm);
-    if (Math.max(t.rx, t.ry) >= 300) anchors.push({ kind: 'territory', faction: t.faction, text: f.name, pos: t.center, size: Math.max(t.rx, t.ry) });
+    if (Math.max(t.rx, t.ry) >= 300) anchors.push({ kind: 'territory', faction: t.faction, text: f.name, pos: [t.center[0], t.center[1] + t.ry * 0.52], size: Math.max(t.rx, t.ry) });
   }
 
   // Grenzbänder
   for (const b of BORDERS) {
     const m = ribbonMat(b.color, { hatch: true });
+    fades.push({ m, base: 1, size: 4000 });
     borders.add(new THREE.Mesh(ribbon(b.pts, b.width), m));
     borders.add(lineOf(b.pts, new THREE.Color(b.color), 0.5));
     timed.push(m);
@@ -182,6 +187,7 @@ export function createOverlays() {
       for (const m of timed) m.uniforms.uTime.value = time;
       const fade = Math.min(1, Math.max(0.15, (camDistance - 1500) / 25000));
       grid.children.forEach((l, i) => { l.material.opacity = (i < 2 ? 0.22 : 0.07) * fade; });
+      for (const f of fades) f.m.uniforms.uOpacity.value = f.base * Math.min(1, Math.max(0.22, camDistance / f.size));
     },
   };
 }

@@ -38,6 +38,11 @@ function showNoWebGL() {
 if (!hasWebGL()) showNoWebGL();
 else start();
 
+// Offline-Unterstützung / installierbare Web-App
+if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
+  navigator.serviceWorker.register('./sw.js').catch(() => {});
+}
+
 function start() {
   if (params.has('nointro')) document.getElementById('intro')?.classList.add('done');
   const quality = pickQuality();

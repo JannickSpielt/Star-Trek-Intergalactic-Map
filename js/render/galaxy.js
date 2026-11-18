@@ -118,7 +118,7 @@ export function createGalaxy(quality = 'high') {
       if (arm.w < 1 && r() > arm.w) arm = ARMS[Math.floor(r() * 2)];
       const rr = R0 + -Math.log(1 - r() * 0.985) * 12500;
       if (rr > 52000) { i--; continue; }
-      const spread = 500 + rr * 0.075;
+      const spread = 320 + rr * 0.05 * (0.6 + r() * 0.8);
       const [ax, ay] = armPoint(arm, rr);
       x = ax + gauss(r) * spread; y = ay + gauss(r) * spread; h = gauss(r) * (180 + rr * 0.004);
       const hii = r() < 0.035;

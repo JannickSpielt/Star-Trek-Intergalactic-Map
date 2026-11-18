@@ -66,7 +66,7 @@ export default async function ({ page, check, assert, sleep, settle, brightness,
     const text = await page.textContent('#info');
     assert.match(text, /Vulcan/); assert.match(text, /Beta/); assert.match(text, /TOS/);
     const href = await page.getAttribute('#info a.ma-link', 'href');
-    assert.ok(href.endsWith('/Vulcan'), href);
+    assert.ok(href.startsWith('https://memory-alpha.fandom.com/de/wiki/Spezial:Suche?') && href.includes('search=Vulcan') && href.includes('go=Go'), href);
   });
   await check('planet image is drawn', async () => {
     await sleep(400);
@@ -135,4 +135,23 @@ export default async function ({ page, check, assert, sleep, settle, brightness,
   });
   await check('mobile: no console errors', () => assert.deepEqual(m.errors, []));
   await m.ctx.close();
+
+  // ── Task 12: Web-App (Manifest, Icons, Service Worker) ──
+  await check('web app manifest with installable icons', async () => {
+    const href = await page.getAttribute('link[rel="manifest"]', 'href');
+    assert.ok(href, 'no manifest link');
+    const man = await page.evaluate(async h => (await fetch(h)).json(), href);
+    assert.equal(man.display, 'standalone');
+    for (const size of ['192x192', '512x512']) {
+      const icon = man.icons.find(i => i.sizes === size);
+      assert.ok(icon, `icon ${size}`);
+      const ok = await page.evaluate(async src => (await fetch(src)).ok, icon.src);
+      assert.ok(ok, `icon ${icon.src} not reachable`);
+    }
+    assert.ok(man.icons.some(i => (i.purpose || '').includes('maskable')), 'maskable icon');
+  });
+  await check('service worker registers', async () => {
+    const ok = await page.evaluate(async () => { const r = await navigator.serviceWorker?.getRegistration(); return !!r; });
+    assert.ok(ok);
+  });
 }
