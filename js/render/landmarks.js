@@ -7,7 +7,7 @@ import { FACTIONS } from '../data/factions.js';
 import { landmarkKind } from '../core/landmarks.js';
 
 const SHOW_BELOW = 3500;   // Kameradistanz (LJ), ab der Wahrzeichen erscheinen
-const SCREEN_PX = 90;      // ungefähre Bildschirmgröße
+const SCREEN_PX = 56;      // ungefähre Bildschirmgröße
 
 const metal = c => new THREE.MeshStandardMaterial({ color: c, metalness: 0.6, roughness: 0.35, transparent: true });
 const glow = c => new THREE.MeshBasicMaterial({ color: c, transparent: true, blending: THREE.AdditiveBlending, depthWrite: false });

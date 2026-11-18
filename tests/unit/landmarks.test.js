@@ -18,3 +18,10 @@ test('stations, wormholes, hubs and the Unikomplex get a 3D landmark', () => {
 test('ordinary planets keep their simple marker', () => {
   for (const id of ['sol', 'vulcan', 'qonos', 'bajor']) assert.equal(landmarkKind(P(id)), null, id);
 });
+
+import { readFileSync } from 'node:fs';
+test('landmarks stay modest on screen (≤ 60 px)', () => {
+  const src = readFileSync(new URL('../../js/render/landmarks.js', import.meta.url), 'utf8');
+  const px = Number(src.match(/const SCREEN_PX = (\d+)/)[1]);
+  assert.ok(px <= 60, `${px} px`);
+});
