@@ -56,3 +56,9 @@ test('isClick distinguishes clicks from drags', () => {
   assert.equal(isClick([0, 0], [20, 0], 100), false);
   assert.equal(isClick([0, 0], [1, 0], 900), false);
 });
+
+test('flyPath lands exactly on the target (no float drift across the quadrant line)', () => {
+  const a = createCameraState({ target: [-2200, 24900], distance: 1600, azimuth: 0, tilt: 0.78 });
+  const b = createCameraState({ target: [0, 26000], distance: 450, azimuth: 0, tilt: 0.78 });
+  assert.deepEqual(flyPath(a, b)(1).target, [0, 26000]);
+});

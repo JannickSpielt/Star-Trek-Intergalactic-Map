@@ -55,7 +55,7 @@ export default async function ({ page, check, assert, sleep, settle, brightness,
   await check('status bar shows quadrant at Sol', async () => {
     await page.evaluate(() => window.__map.flyTo('sol'));
     await settle(page); await sleep(300);
-    assert.match(await page.textContent('#readout-quadrant'), /Beta/);
+    const qt = await page.textContent("#readout-quadrant"); const st = await page.evaluate(() => window.__map.state()); assert.match(qt, /Beta/, `got "${qt}" target ${st.target} flying ${st.flying}`);
     assert.match(await page.textContent('#scale-label'), /LJ/);
   });
 }

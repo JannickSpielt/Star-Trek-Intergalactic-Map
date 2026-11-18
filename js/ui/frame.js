@@ -71,7 +71,7 @@ export function createFrame({ bookmarks, layers, onBookmark }) {
     setStatus({ target, pxPerLy, distance }) {
       const rx = Math.round(target[0] - SOL[0]), ry = Math.round(SOL[1] - target[1]);
       const ly = nice(110 / pxPerLy);
-      const key = `${rx}|${ry}|${ly}|${Math.round(distance)}`;
+      const key = `${quadrant(target)}|${rx}|${ry}|${ly}|${Math.round(distance)}`;
       if (key === last) return; last = key;
       qEl.textContent = `${quadrant(target)}-Quadrant`;
       cEl.textContent = `X ${rx.toLocaleString('de-DE')} · Y ${ry.toLocaleString('de-DE')} (Sol = 0)`;
