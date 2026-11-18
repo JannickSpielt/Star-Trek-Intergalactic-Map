@@ -1,5 +1,5 @@
 /** Reine Kameralogik (ohne three.js): Orbit um einen Zielpunkt auf der Galaxie-Ebene. */
-export const MIN_DIST = 25;
+export const MIN_DIST = 8;
 export const MAX_DIST = 160000;
 export const MAX_TILT = 1.1;
 

@@ -14,7 +14,7 @@ test('place ids are unique', () => {
 test('every place is well formed', () => {
   for (const p of PLACES) {
     assert.ok(FACTIONS[p.faction], `${p.id}: faction ${p.faction}`);
-    assert.ok([1,2,3,4].includes(p.rank), `${p.id}: rank`);
+    assert.ok([1,2,3,4,5].includes(p.rank), `${p.id}: rank`);
     assert.ok(p.series.length >= 1, `${p.id}: series`);
     assert.ok(p.desc.length >= 40, `${p.id}: desc too short`);
     assert.ok(p.ma, `${p.id}: ma`);
@@ -44,4 +44,17 @@ test('shapes reference valid data', () => {
   assert.ok(byId[WORMHOLE.from] && byId[WORMHOLE.to]);
   for (const t of TERRITORIES) assert.ok(FACTIONS[t.faction], t.faction);
   assert.ok(REGIONS.length >= 6 && BORDERS.length >= 3 && BOOKMARKS.length >= 6);
+});
+
+test('neighbours of Sol sit at their canon distances (light years)', () => {
+  const d = id => Math.hypot(byId[id].pos[0] - SOL[0], byId[id].pos[1] - SOL[1]);
+  const near = (id, ly, tol = 0.6) => assert.ok(Math.abs(d(id) - ly) <= tol, `${id}: ${d(id).toFixed(1)} LJ, erwartet ${ly}`);
+  near('alphacen', 4.4);
+  near('wolf359', 7.9);
+  near('tellar', 11.4);
+  near('vulcan', 16.5);
+});
+
+test('Sol-system places only appear when zoomed right in (rank 5)', () => {
+  for (const id of ['mars', 'jupiter', 'alphacen', 'wolf359']) assert.equal(byId[id].rank, 5, id);
 });

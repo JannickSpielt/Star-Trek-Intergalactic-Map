@@ -60,3 +60,8 @@ test('labels avoid blocker rectangles (e.g. region names)', () => {
   const out = layoutLabels(items, { ...opts, blockers });
   for (const l of out) assert.ok(!overlaps(rect(l, items), blockers[0]));
 });
+
+test('rank 5 is only visible very close', () => {
+  assert.equal(rankVisible(5, 400), false);
+  assert.equal(rankVisible(5, 200), true);
+});

@@ -27,5 +27,5 @@ export function layoutLabels(items, { width, height, pad = 4, blockers = [] }) {
   return out;
 }
 
-const RANK_MAX_DIST = { 1: Infinity, 2: 60000, 3: 12000, 4: 3000 };
+const RANK_MAX_DIST = { 1: Infinity, 2: 60000, 3: 12000, 4: 3000, 5: 300 };
 export const rankVisible = (rank, distance) => distance < (RANK_MAX_DIST[rank] ?? 0);

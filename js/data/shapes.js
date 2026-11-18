@@ -52,7 +52,7 @@ export const WORMHOLE = { from: 'wurmloch-bajor', to: 'idran' };
 export const BOOKMARKS = [
   { name: 'Galaxie', target: [0, 4000], distance: 'fit', color: '#ff9c3a' },
   { name: 'Föderation', target: L(-300, -200), distance: 9000, color: '#99ccff' },
-  { name: 'Erde', target: L(0, 0), distance: 650, color: '#9999ff' },
+  { name: 'Erde', target: L(0, 0), distance: 45, color: '#9999ff' },
   { name: 'Bajor · DS9', target: L(-2200, -1100), distance: 1600, color: '#ffcc99' },
   { name: 'Neutrale Zone', target: L(800, -1800), distance: 4200, color: '#cc99cc' },
   { name: 'Klingonen', target: L(2600, -600), distance: 4500, color: '#cc6666' },

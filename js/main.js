@@ -24,7 +24,7 @@ const params = new URLSearchParams(location.search);
 function focusDistance(p) {
   let nn = Infinity;
   for (const q of PLACES) if (q !== p) nn = Math.min(nn, dist(p.pos, q.pos));
-  return Math.min(20000, Math.max(450, nn * 7));
+  return Math.min(20000, Math.max(30, nn * 7));
 }
 
 function showNoWebGL() {

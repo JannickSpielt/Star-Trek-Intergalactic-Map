@@ -173,4 +173,24 @@ export default async function ({ page, check, assert, sleep, settle, brightness,
       await allLabelsClear(page, id);
     });
   }
+
+  // ── Canon-Abstände: Namen der Nachbarsterne erscheinen erst beim Heranzoomen ──
+  const labelShown = id => page.evaluate(i => { const el = document.querySelector(`.label[data-id="${i}"]`); return !!el && el.style.opacity !== '0'; }, id);
+  await check('far from Sol the close neighbours are hidden', async () => {
+    await page.evaluate(() => { window.__map.select(null); window.__map.flyTo('sol', { distance: 3000 }); });
+    await settle(page); await sleep(500);
+    assert.equal(await labelShown('sol'), true);
+    assert.equal(await labelShown('alphacen'), false);
+    assert.equal(await labelShown('mars'), false);
+  });
+  await check('zooming in reveals Vulcan, Alpha Centauri and Mars', async () => {
+    await page.evaluate(() => window.__map.flyTo('sol', { distance: 45 }));
+    await settle(page); await sleep(500);
+    for (const id of ['vulcan', 'alphacen', 'wolf359']) assert.equal(await labelShown(id), true, id);
+    await page.evaluate(() => window.__map.flyTo('sol', { distance: 12 }));
+    await settle(page); await sleep(500);
+    assert.equal(await labelShown('mars'), true, 'mars');
+  });
+  await shot(page, '06-sol-nah');
+  await check('no label overlaps right at Sol', async () => { await allLabelsClear(page, 'sol-nah'); });
 }

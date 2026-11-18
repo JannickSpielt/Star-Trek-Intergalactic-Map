@@ -1,7 +1,9 @@
 /**
  * Orte der Karte (Ära ~2375). Alle Texte sind eigene Kurzbeschreibungen.
  * pos: [x, y] in Lichtjahren, galaktisches Zentrum = (0,0), Sol = (0, 26000).
- * rank: 1 = immer sichtbar … 4 = nur im Nahbereich.
+ * rank: 1 = immer sichtbar … 4 = Nahbereich, 5 = nur ganz nah (Sonnensystem und Nachbarsterne).
+ * Die direkten Nachbarn von Sol stehen in ihren Canon-Abständen (Alpha Centauri 4,4 LJ, Wolf 359 7,9 LJ,
+ * Tellar 11,4 LJ, Vulcan 16,5 LJ); weiter entfernte Orte sind für die Lesbarkeit angenähert.
  * ma: Seitenname bei Memory Alpha (de).
  */
 const SY = 26000;
@@ -15,19 +17,19 @@ export const PLACES = [
   // ─── Föderation ───────────────────────────────────────────────
   P('sol', 'Sol (Erde)', L(0, 0), 'capital', 'fed', 1, 'city', ['TOS', 'TNG', 'DS9', 'VOY', 'ENT', 'DIS', 'PIC', 'Filme'], 'Erde',
     'Heimat der Menschheit und Herz der Föderation: Föderationsrat und Präsident tagen in Paris, das Starfleet-Hauptquartier liegt in San Francisco.', ['Erde', 'Earth', 'Terra', 'Sonnensystem']),
-  P('mars', 'Mars, Utopia Planitia', L(6, 9), 'station', 'fed', 4, 'desert', ['TNG', 'VOY', 'PIC', 'LD'], 'Utopia_Planitia_Flottenwerften',
+  P('mars', 'Mars, Utopia Planitia', L(0.33, 0.5), 'station', 'fed', 5, 'desert', ['TNG', 'VOY', 'PIC', 'LD'], 'Utopia_Planitia_Flottenwerften',
     'Die großen Orbitalwerften über dem Mars. Hier liefen unter anderem die Enterprise-D und die Voyager vom Stapel.', ['Utopia Planitia', 'Mars']),
-  P('jupiter', 'Jupiter-Station', L(-8, 10), 'station', 'fed', 4, 'gas', ['TNG', 'VOY'], 'Jupiter-Station',
+  P('jupiter', 'Jupiter-Station', L(-0.5, 0.62), 'station', 'fed', 5, 'gas', ['TNG', 'VOY'], 'Jupiter-Station',
     'Forschungsstation im Jupiterorbit, an der Dr. Lewis Zimmerman das Medizinisch-Holografische Notfallprogramm entwickelte.', ['Jupiter']),
-  P('vulcan', 'Vulcan', L(70, -45), 'planet', 'fed', 2, 'desert', ['TOS', 'TNG', 'ENT', 'DIS', 'SNW', 'Filme'], 'Vulcan',
+  P('vulcan', 'Vulcan', L(13.88, -8.92), 'planet', 'fed', 2, 'desert', ['TOS', 'TNG', 'ENT', 'DIS', 'SNW', 'Filme'], 'Vulcan',
     'Heiße Wüstenwelt der Vulkanier und Gründungsmitglied der Föderation. Suraks Lehre machte Logik zum Fundament der ganzen Kultur.', ['Vulkan', 'Vulcanis', "T'Khasi"]),
-  P('andoria', 'Andoria', L(135, 70), 'planet', 'fed', 2, 'ice', ['TOS', 'ENT', 'DIS'], 'Andoria',
+  P('andoria', 'Andoria', L(13.3, 6.9), 'planet', 'fed', 2, 'ice', ['TOS', 'ENT', 'DIS'], 'Andoria',
     'Eisiger Mond eines Gasriesen und Heimat der blauhäutigen Andorianer, die ebenfalls zu den Gründern der Föderation gehören.', ['Andor']),
-  P('tellar', 'Tellar Prime', L(-95, 95), 'planet', 'fed', 2, 'jungle', ['TOS', 'ENT', 'DIS'], 'Tellar_Prime',
+  P('tellar', 'Tellar Prime', L(-8.06, 8.06), 'planet', 'fed', 2, 'jungle', ['TOS', 'ENT', 'DIS'], 'Tellar_Prime',
     'Heimat der streitfreudigen Telariten, für die eine hitzige Debatte zum guten Ton gehört. Gründungsmitglied der Föderation.', ['Tellar']),
-  P('alphacen', 'Alpha Centauri', L(-28, 18), 'planet', 'fed', 4, 'ocean', ['TOS', 'ENT', 'PIC'], 'Alpha_Centauri',
+  P('alphacen', 'Alpha Centauri', L(-3.7, 2.38), 'planet', 'fed', 5, 'ocean', ['TOS', 'ENT', 'PIC'], 'Alpha_Centauri',
     'Das nächste Sternsystem zur Erde und eine der ältesten menschlichen Kolonien.', ['Alpha Cen']),
-  P('wolf359', 'Wolf 359', L(22, -32), 'battle', 'fed', 3, 'debris', ['TNG', 'DS9', 'PIC'], 'Schlacht_von_Wolf_359',
+  P('wolf359', 'Wolf 359', L(4.48, -6.52), 'battle', 'fed', 5, 'debris', ['TNG', 'DS9', 'PIC'], 'Schlacht_von_Wolf_359',
     'Schauplatz der Katastrophe von 2367: Ein einziger Borg-Kubus zerstörte hier 39 Starfleet-Schiffe auf dem Weg zur Erde.', ['Wolf359']),
   P('betazed', 'Betazed', L(-720, -420), 'planet', 'fed', 2, 'jungle', ['TNG', 'DS9', 'VOY'], 'Betazed',
     'Heimat der telepathischen Betazoiden, bekannt für Offenheit und prunkvolle Hochzeiten. Im Dominion-Krieg zeitweise besetzt.', []),
@@ -59,7 +61,7 @@ export const PLACES = [
     'Siedlung indigener Kolonisten, die per Vertrag an Cardassia fiel. Solche Abtretungen trieben viele Siedler in den Maquis.', []),
   P('sb375', 'Sternenbasis 375', L(-1500, -700), 'station', 'fed', 4, 'station', ['DS9'], 'Sternenbasis_375',
     'Wichtige Basis im Dominion-Krieg und Sitz von Admiral Ross.', ['Starbase 375']),
-  P('archer4', 'Archer IV', L(160, -140), 'planet', 'fed', 4, 'jungle', ['ENT'], 'Archer_IV',
+  P('archer4', 'Archer IV', L(26.3, -23), 'planet', 'fed', 4, 'jungle', ['ENT'], 'Archer_IV',
     'Von Captain Jonathan Archer entdeckte und nach ihm benannte Welt.', []),
   P('benzar', 'Benzar', L(-610, -120), 'planet', 'fed', 4, 'storm', ['TNG', 'DS9'], 'Benzar',
     'Heimat der Benziten, die außerhalb ihrer Atmosphäre auf Atemgeräte angewiesen sind.', ['Benziten']),
