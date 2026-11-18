@@ -1,0 +1,13 @@
+{
+  "name": "star-trek-galaxy-map",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Interaktive 3D-Karte der Milchstraße im Star-Trek-Universum (inoffizielles Fanprojekt)",
+  "type": "module",
+  "scripts": {
+    "test": "node --test tests/unit/*.test.js",
+    "e2e": "node tests/e2e/smoke.mjs",
+    "serve": "python3 -m http.server 8080"
+  },
+  "license": "MIT"
+}

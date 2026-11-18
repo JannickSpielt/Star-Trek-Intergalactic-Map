@@ -1,0 +1,47 @@
+import { test } from 'node:test';
+import assert from 'node:assert/strict';
+import { FACTIONS } from '../../js/data/factions.js';
+import { PLACES } from '../../js/data/places.js';
+import { TERRITORIES, REGIONS, BORDERS, WORMHOLE, BOOKMARKS, SOL, GALAXY_RADIUS } from '../../js/data/shapes.js';
+
+const ART = ['desert','ocean','ice','gas','city','jungle','lava','barren','storm','station','wormhole','nebula','debris'];
+const byId = Object.fromEntries(PLACES.map(p => [p.id, p]));
+
+test('place ids are unique', () => {
+  assert.equal(new Set(PLACES.map(p => p.id)).size, PLACES.length);
+});
+
+test('every place is well formed', () => {
+  for (const p of PLACES) {
+    assert.ok(FACTIONS[p.faction], `${p.id}: faction ${p.faction}`);
+    assert.ok([1,2,3,4].includes(p.rank), `${p.id}: rank`);
+    assert.ok(p.series.length >= 1, `${p.id}: series`);
+    assert.ok(p.desc.length >= 40, `${p.id}: desc too short`);
+    assert.ok(p.ma, `${p.id}: ma`);
+    assert.ok(ART.includes(p.art), `${p.id}: art ${p.art}`);
+    assert.ok(Array.isArray(p.aliases), `${p.id}: aliases`);
+    assert.ok(Math.hypot(...p.pos) <= GALAXY_RADIUS, `${p.id}: outside galaxy`);
+  }
+});
+
+test('at least 60 places including the key ones', () => {
+  assert.ok(PLACES.length >= 60, `only ${PLACES.length}`);
+  for (const id of ['sol','vulcan','qonos','romulus','cardassia','bajor','ds9','wurmloch-bajor','idran','gruender','ocampa','unikomplex','wolf359'])
+    assert.ok(byId[id], `missing ${id}`);
+});
+
+test('sol sits at the canonical position', () => {
+  assert.deepEqual(byId.sol.pos, [0, 26000]);
+  assert.deepEqual(SOL, [0, 26000]);
+});
+
+test('aliases cover alternative spellings', () => {
+  assert.ok(byId.qonos.aliases.includes('Kronos'));
+  assert.ok(byId.ds9.aliases.includes('Terok Nor'));
+});
+
+test('shapes reference valid data', () => {
+  assert.ok(byId[WORMHOLE.from] && byId[WORMHOLE.to]);
+  for (const t of TERRITORIES) assert.ok(FACTIONS[t.faction], t.faction);
+  assert.ok(REGIONS.length >= 6 && BORDERS.length >= 3 && BOOKMARKS.length >= 6);
+});
