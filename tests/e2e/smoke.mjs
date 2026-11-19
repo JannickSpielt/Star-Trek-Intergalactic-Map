@@ -25,8 +25,10 @@ async function openPage(browser, opts = {}) {
   const ctx = await browser.newContext({ viewport: { width: 1280, height: 800 }, deviceScaleFactor: 1, ...opts });
   const page = await ctx.newPage();
   const errors = [];
-  page.on('pageerror', e => errors.push(e.message));
-  page.on('console', m => { if (m.type() === 'error') errors.push(m.text()); });
+  // Fehler sammeln, aber begrenzt: eine Seite, die pro Bild einen Fehler wirft, darf den Test nicht sprengen
+  const add = msg => { if (errors.length < 50) { errors.push(msg); if (errors.length <= 3) console.log('     [page error] ' + msg.slice(0, 200)); } else errors.overflow = (errors.overflow || 0) + 1; };
+  page.on('pageerror', e => add(e.message));
+  page.on('console', m => { if (m.type() === 'error') add(m.text()); });
   await page.goto(URL + '?nointro=1&q=low');
   return { page, errors, ctx };
 }

@@ -246,7 +246,7 @@ body.journey-open .hint { opacity: 0; }
 .pl-controls button:nth-child(3) { border-radius: 0 18px 18px 0; }
 .pl-controls button:hover { filter: brightness(1.15); }
 .pl-note { margin-left: auto; font-size: 11px; color: var(--ink-faint); letter-spacing: .08em; text-transform: uppercase; }
-@media (max-width: 760px) {
+@media (max-width: 760px), (max-height: 500px) and (pointer: coarse) {
   .player { left: 8px; right: 8px; width: auto; transform: translateY(30px); bottom: calc(var(--bottom-h) + 6px); }
   .player.open { transform: none; }
   .pl-note { display: none; }
@@ -272,13 +272,15 @@ body.journey-open .hint { opacity: 0; }
 .no-webgl p { max-width: 520px; font-family: system-ui, sans-serif; letter-spacing: 0; color: var(--ink-dim); line-height: 1.5; }
 
 /* ── Mobil ─────────────────────────────────────────────────────────── */
-@media (max-width: 760px) {
+@media (max-width: 760px), (max-height: 500px) and (pointer: coarse) {
   :root { --side-w: 64px; --top-h: 52px; --bottom-h: 34px; --r: 20px; }
   .lc-title { font-size: 20px; line-height: 28px; height: 28px; margin-top: -5px; }
   .lc-seg--c, .lc-seg--a, #readout-era, .lc-seg--e, #readout-dist { display: none; }
   .lc-readout--mono { min-width: 0; }
   .lc-elbow span { display: none; }
-  .lc-side { width: auto; bottom: auto; }
+  .lc-side { width: auto; bottom: auto; z-index: 9; }
+  .info-head { touch-action: none; }
+  #results { touch-action: pan-y; overscroll-behavior: contain; }
   .lc-menu { display: block; width: var(--side-w); height: 40px; border: 0; background: var(--lc-peach); color: #000; font-size: 13px; font-weight: 600; text-transform: uppercase; border-radius: 0 20px 20px 0; }
   .lc-side-panel { display: none; position: fixed; left: 0; top: calc(var(--top-h) + 52px); width: 200px; max-height: calc(100vh - var(--top-h) - 120px);
     height: auto; background: #000; padding: 0 6px 6px 0; border-radius: 0 0 18px 0; }
@@ -301,4 +303,8 @@ body.journey-open .hint { opacity: 0; }
 }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition-duration: .01ms !important; }
+}
+/* Sehr flache Handys quer: kein Platz für Zoom-Knöpfe und Übersichtskarte zugleich */
+@media (max-height: 420px) and (pointer: coarse) {
+  .minimap-wrap { display: none; }
 }

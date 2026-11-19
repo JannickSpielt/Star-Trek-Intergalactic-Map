@@ -19,8 +19,27 @@ export function createInfo({ onClose, onCenter, onFocusPower = () => {} }) {
   document.getElementById('info-close').addEventListener('click', () => onClose());
   // Bottom-Sheet nach unten wischen
   let sy = null;
-  el.querySelector('.info-grip').addEventListener('pointerdown', e => { sy = e.clientY; e.target.setPointerCapture(e.pointerId); });
-  el.querySelector('.info-grip').addEventListener('pointerup', e => { if (sy !== null && e.clientY - sy > 50) onClose(); sy = null; });
+  // Bottom-Sheet: am Griff und am ganzen Kopf nach unten wischbar, folgt dem Finger
+  const compact = () => matchMedia('(max-width: 760px), (max-height: 500px) and (pointer: coarse)').matches;
+  for (const handle of [el.querySelector('.info-grip'), el.querySelector('.info-head')]) {
+    handle.addEventListener('pointerdown', e => {
+      if (!compact() || e.target.closest('button')) return;
+      sy = e.clientY; handle.setPointerCapture(e.pointerId);
+      el.style.transition = 'none';
+    });
+    handle.addEventListener('pointermove', e => {
+      if (sy === null) return;
+      el.style.transform = `translateY(${Math.max(0, e.clientY - sy)}px)`;
+    });
+    const end = e => {
+      if (sy === null) return;
+      const dy = e.clientY - sy; sy = null;
+      el.style.transition = ''; el.style.transform = '';
+      if (dy > 60) onClose();
+    };
+    handle.addEventListener('pointerup', end);
+    handle.addEventListener('pointercancel', end);
+  }
 
   function hide() {
     el.classList.remove('open'); el.setAttribute('aria-hidden', 'true');

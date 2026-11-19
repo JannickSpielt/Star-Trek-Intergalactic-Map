@@ -14,7 +14,12 @@ export function createSearchUI(input, list, places, onPick) {
       li.style.setProperty('--c', FACTIONS[p.faction].color);
       li.innerHTML = `<span class="dot"></span><span></span><small>${quadrant(p.pos)}</small>`;
       li.children[1].textContent = p.name;
-      li.addEventListener('pointerdown', e => { e.preventDefault(); pick(p); });
+      // Fokus im Suchfeld halten, aber erst beim Loslassen ohne Wischbewegung auswählen
+      let down = null;
+      li.addEventListener('pointerdown', e => { e.preventDefault(); down = [e.clientX, e.clientY]; });
+      li.addEventListener('pointerup', e => { if (down && Math.hypot(e.clientX - down[0], e.clientY - down[1]) < 8) pick(p); down = null; });
+      li.addEventListener('pointercancel', () => { down = null; });
+      li.addEventListener('pointerleave', () => { down = null; });
       list.appendChild(li);
     });
     const open = hits.length > 0;

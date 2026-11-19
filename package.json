@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "test": "node --test tests/unit/*.test.js",
-    "e2e": "node tests/e2e/smoke.mjs && node tests/e2e/offline.mjs",
+    "e2e": "node tests/e2e/smoke.mjs && node tests/e2e/offline.mjs && node tests/e2e/landscape.mjs",
     "serve": "python3 -m http.server 8080"
   },
   "license": "MIT"

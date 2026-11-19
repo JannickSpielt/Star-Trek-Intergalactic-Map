@@ -164,8 +164,44 @@ export default async function ({ page, check, assert, sleep, settle, brightness,
     // Finger im Uhrzeigersinn gedreht -> rechter Punkt wandert nach unten
     assert.ok(p.y > c[1] + 20, `ref y ${p.y.toFixed(0)} (center ${c[1]})`);
   });
+  // ── Handy-Fehler aus dem Nutzertest ──
+  await check('mobile: swiping the sheet header down closes the info sheet', async () => {
+    await m.page.evaluate(() => window.__map.focus('bajor'));
+    await m.page.waitForSelector('#info.open'); await sleep(600);
+    const h = await (await m.page.$('#info-title')).boundingBox();
+    const x = h.x + 30, y0 = h.y + h.height / 2;   // am Titel, nicht am Griffstrich
+    await touch('touchStart', [[x, y0]]);
+    for (let i = 1; i <= 8; i++) await touch('touchMove', [[x, y0 + i * 18]]);
+    await touch('touchEnd', []);
+    await sleep(600);
+    assert.equal((await m.page.$('#info.open')) !== null, false);
+  });
+  await check('mobile: scrolling the search results does not pick a result', async () => {
+    await m.page.fill('#search', 'a');
+    await m.page.waitForSelector('#results.open li'); await sleep(200);
+    const b = await (await m.page.$('#results li:nth-child(2)')).boundingBox();
+    const x = b.x + 40, y0 = b.y + b.height / 2;
+    await touch('touchStart', [[x, y0]]);
+    for (let i = 1; i <= 6; i++) await touch('touchMove', [[x, y0 - i * 10]]);
+    await touch('touchEnd', []);
+    await sleep(400);
+    assert.equal(await m.page.evaluate(() => window.__map.state().selected), null);
+    await m.page.fill('#search', '');
+    await m.page.evaluate(() => document.activeElement.blur());
+  });
+  await check('mobile: the menu stays usable while an info sheet is open', async () => {
+    await m.page.evaluate(() => window.__map.focus('vulcan'));
+    await m.page.waitForSelector('#info.open'); await sleep(500);
+    await m.page.tap('#menu-toggle'); await sleep(300);
+    const btn = await m.page.$('#bookmarks button:has-text("Dominion")');
+    const bb = await btn.boundingBox();
+    const top = await m.page.evaluate(([x, y]) => document.elementFromPoint(x, y)?.closest('button')?.textContent, [bb.x + bb.width / 2, bb.y + bb.height / 2]);
+    assert.equal(top, 'Dominion');
+    await m.page.tap('#menu-toggle'); await m.page.evaluate(() => window.__map.select(null));
+  });
   await check('mobile: no console errors', () => assert.deepEqual(m.errors, []));
   await m.ctx.close();
+
 
   // ── Task 12: Web-App (Manifest, Icons, Service Worker) ──
   await check('web app manifest with installable icons', async () => {
@@ -290,7 +326,7 @@ export default async function ({ page, check, assert, sleep, settle, brightness,
   });
   await check('closing the player hides it', async () => {
     await page.click('#player-close');
-    assert.equal(await page.$('#player.open'), null);
+    assert.equal((await page.$('#player.open')) !== null, false);
   });
 
   // ── Seitenleiste mit Reitern & Reichs-Infos ──

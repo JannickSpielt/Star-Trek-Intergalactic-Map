@@ -256,7 +256,8 @@ function start() {
       // Desktop: Fenster rechts -> Ziel nach links; Handy: Bottom-Sheet -> Ziel nach oben
       const perPx = (2 * Math.tan((FOV * Math.PI) / 360) * d) / H;
       const { right, up } = screenAxes(cam.azimuth);
-      const [sx, sy] = W > 760 ? [Math.min(230, W * 0.18), 0] : [0, -H * 0.27];
+      const compact = matchMedia('(max-width: 760px), (max-height: 500px) and (pointer: coarse)').matches;
+      const [sx, sy] = !compact ? [Math.min(230, W * 0.18), 0] : [0, -H * 0.27];
       flyTo([p.pos[0] + (right[0] * sx + up[0] * sy) * perPx, p.pos[1] + (right[1] * sx + up[1] * sy) * perPx], { distance: d });
     },
     on(ev, fn) { listeners[ev]?.push(fn); },
