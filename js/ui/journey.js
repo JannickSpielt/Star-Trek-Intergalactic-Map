@@ -45,7 +45,8 @@ export function createJourney({ el, route, map }) {
     t = Math.min(1, Math.max(0, v));
     const p = route.setProgress(t, true);
     range.value = Math.round(t * 1000);
-    showStop(p.stop + (t >= path.tOfStop(Math.min(stops.length - 1, p.stop + 1)) - 1e-9 ? 1 : 0));
+    // aktuelle Station = zuletzt erreichter Meilenstein (nie über die letzte Station hinaus)
+    showStop(Math.min(stops.length - 1, Math.max(0, path.reachedStops(t) - 1)));
     if (follow) map.follow(p.pos, p.jump ? 26000 : 14000);
     return p;
   }

@@ -271,6 +271,23 @@ export default async function ({ page, check, assert, sleep, settle, brightness,
   });
   await sleep(1500);
   await shot(page, '07-voyager');
+  await check('reaching the end of the journey shows the arrival and keeps rendering', async () => {
+    const errsBefore = await page.evaluate(() => (window.__qaErrors = window.__qaErrors || [], 0));
+    await page.evaluate(() => window.__map.journey.goToStop(12));
+    await sleep(200);
+    await page.click('#player-next');
+    await sleep(300);
+    assert.match(await page.textContent('#player'), /Ankunft/);
+    // Regler ganz ans Ende ziehen
+    await page.evaluate(() => { const r = document.getElementById('pl-range'); r.value = 1000; r.dispatchEvent(new Event('input')); });
+    await sleep(300);
+    assert.match(await page.textContent('#player'), /Ankunft/);
+    // Karte zeichnet weiter: Zustand ändert sich nach einem Zoom
+    const d0 = await page.evaluate(() => window.__map.state().distance);
+    await page.click('#zoom-in'); await sleep(1500);
+    const d1 = await page.evaluate(() => window.__map.state().distance);
+    assert.ok(d1 < d0, `distance ${d0} -> ${d1}`);
+  });
   await check('closing the player hides it', async () => {
     await page.click('#player-close');
     assert.equal(await page.$('#player.open'), null);
