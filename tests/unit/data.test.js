@@ -73,3 +73,12 @@ test('known content errors stay fixed', () => {
   assert.ok(!/Telariten/.test(all), 'Tellariten mit Doppel-l');
   assert.equal(byId.mars.approx, true, 'Mars-Lage ist nur angenähert');
 });
+
+test('Memory Alpha titles match the German wiki (checked via its API)', async () => {
+  const { FACTION_INFO } = await import('../../js/data/factions.js');
+  const want = { mars: 'Utopia-Planitia-Flottenwerft', vulcan: 'Vulkan', bakuplanet: "Ba'ku (Planet)", idran: 'Idran-System',
+    teplan: 'Teplan-System', sherman: 'Sherman-Planet', mokra: 'Mokra-Orden', nekritstation: 'Nekrit-Ausdehnung', transwarp: 'Transwarpzentrum' };
+  for (const [id, t] of Object.entries(want)) assert.equal(byId[id].ma.replace(/_/g, ' '), t, id);
+  const powers = { tze: 'Tzenkethi', kaz: 'Kazon', vid: 'Vidiianer', hir: 'Hirogen', mal: 'Malon' };
+  for (const [id, t] of Object.entries(powers)) assert.equal(FACTION_INFO[id].ma, t, id);
+});

@@ -220,6 +220,13 @@ body.info-open .minimap-wrap { opacity: 0; transform: scale(.9); pointer-events:
   box-shadow: 0 30px 80px rgba(0,0,0,.7), inset 0 0 0 1px var(--line); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); }
 .player.open { transform: translate(-50%, 0); opacity: 1; pointer-events: auto; }
 body.journey-open .hint { opacity: 0; }
+/* Reise offen + Infofenster (Desktop): Infofenster endet oberhalb des Abspielers */
+body.journey-open .info { max-height: calc(100vh - var(--top-h) - var(--bottom-h) - 330px); }
+/* kompakt: Infofenster und Abspieler teilen sich den unteren Rand – Abspieler weicht kurz aus */
+@media (max-width: 760px), (max-height: 500px) and (pointer: coarse) {
+  body.journey-open .info { max-height: 72vh; }
+  body.journey-open.info-open .player { opacity: 0; pointer-events: none; }
+}
 .pl-head { display: flex; align-items: stretch; gap: 8px; }
 .pl-cap { width: 22px; border-radius: 11px 0 0 11px; background: var(--lc-gold); }
 .pl-head h2 { flex: 1; margin: 0; font-size: 18px; line-height: 28px; padding: 0 12px; background: var(--lc-gold); color: #000; text-transform: uppercase; letter-spacing: .1em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }

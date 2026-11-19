@@ -68,7 +68,7 @@ export default async function ({ page, check, assert, sleep, settle, brightness,
     const text = await page.textContent('#info');
     assert.match(text, /Vulcan/); assert.match(text, /Alpha/); assert.match(text, /TOS/);
     const href = await page.getAttribute('#info a.ma-link', 'href');
-    assert.ok(href.startsWith('https://memory-alpha.fandom.com/de/wiki/Spezial:Suche?') && href.includes('search=Vulcan') && href.includes('go=Go'), href);
+    assert.ok(href.startsWith('https://memory-alpha.fandom.com/de/wiki/Spezial:Suche?') && href.includes('search=Vulkan') && href.includes('go=Go'), href);
   });
   await check('planet image is drawn', async () => {
     await sleep(400);
@@ -420,5 +420,35 @@ export default async function ({ page, check, assert, sleep, settle, brightness,
     await page.waitForSelector('#results.open li.empty');
     assert.match(await page.textContent('#results'), /Keine Treffer/);
     await page.fill('#search', ''); await page.evaluate(() => document.activeElement.blur());
+  });
+
+  // ── Abspieler & Infofenster, Esc, -0 ──
+  const rectOf = sel => page.evaluate(s => { const r = document.querySelector(s).getBoundingClientRect(); return { l: r.left, t: r.top, r: r.right, b: r.bottom }; }, sel);
+  const overlap = (a, b) => a.l < b.r && b.l < a.r && a.t < b.b && b.t < a.b;
+  await check('journey player and info panel never overlap', async () => {
+    await page.evaluate(() => window.__map.focusPower('kli'));
+    await page.waitForSelector('#info.open'); await sleep(400);
+    await page.evaluate(() => window.__map.journey.open()); await sleep(800);
+    const infoOpen = await page.$('#info.open') !== null, playerOpen = await page.$('#player.open') !== null;
+    if (infoOpen && playerOpen) assert.equal(overlap(await rectOf('#info'), await rectOf('#player')), false, 'panels overlap');
+    assert.ok(playerOpen, 'player not open');
+  });
+  await check('jumping to a place pauses a running journey', async () => {
+    await page.click('#player-play'); await sleep(600);
+    await page.evaluate(() => window.__map.focus('sol')); await sleep(300);
+    assert.equal(await page.evaluate(() => window.__map.journey.state().playing), false);
+    await settle(page);
+    const t = await page.evaluate(() => window.__map.state().target);
+    assert.ok(Math.abs(t[1] - 26000) < 400, `camera not at Sol: ${t}`);
+  });
+  await check('Esc closes the journey player', async () => {
+    await page.evaluate(() => window.__map.journey.open()); await sleep(300);
+    await page.keyboard.press('Escape'); await sleep(150);
+    await page.keyboard.press('Escape'); await sleep(300);
+    assert.equal(await page.$('#player.open') !== null, false);
+  });
+  await check('coordinates never show "-0"', async () => {
+    await page.evaluate(() => window.__map.flyTo([-0.3, 25999.7], { distance: 40 })); await settle(page); await sleep(300);
+    assert.ok(!/-0(?![\d.,])/.test(await page.textContent('#readout-coords')), await page.textContent('#readout-coords'));
   });
 }

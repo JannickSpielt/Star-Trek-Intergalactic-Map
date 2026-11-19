@@ -19,11 +19,11 @@ export const PLACES = [
   // ─── Föderation ───────────────────────────────────────────────
   P('sol', 'Sol (Erde)', L(0, 0), 'capital', 'fed', 1, 'city', ['TOS', 'TNG', 'DS9', 'VOY', 'ENT', 'DIS', 'PIC', 'Filme'], 'Erde',
     'Heimat der Menschheit und Herz der Föderation: Föderationsrat und Präsident tagen in Paris, das Starfleet-Hauptquartier liegt in San Francisco.', ['Erde', 'Earth', 'Terra', 'Sonnensystem']),
-  P('mars', 'Mars, Utopia Planitia', L(0.33, 0.5), 'station', 'fed', 5, 'desert', ['TNG', 'VOY', 'PIC', 'LD'], 'Utopia_Planitia_Flottenwerften',
+  P('mars', 'Mars, Utopia Planitia', L(0.33, 0.5), 'station', 'fed', 5, 'desert', ['TNG', 'VOY', 'PIC', 'LD'], 'Utopia-Planitia-Flottenwerft',
     'Die großen Orbitalwerften über dem Mars. Hier liefen unter anderem die Enterprise-D und die Voyager vom Stapel.', ['Utopia Planitia', 'Mars']),
   P('jupiter', 'Jupiter-Station', L(-0.5, 0.62), 'station', 'fed', 5, 'gas', ['TNG', 'VOY'], 'Jupiter-Station',
     'Forschungsstation im Jupiterorbit, an der Dr. Lewis Zimmerman das Medizinisch-Holografische Notfallprogramm entwickelte.', ['Jupiter']),
-  P('vulcan', 'Vulcan', L(13.88, -8.92), 'planet', 'fed', 2, 'desert', ['TOS', 'TNG', 'ENT', 'DIS', 'SNW', 'Filme'], 'Vulcan',
+  P('vulcan', 'Vulcan', L(13.88, -8.92), 'planet', 'fed', 2, 'desert', ['TOS', 'TNG', 'ENT', 'DIS', 'SNW', 'Filme'], 'Vulkan',
     'Heiße Wüstenwelt der Vulkanier und Gründungsmitglied der Föderation. Suraks Lehre machte Logik zum Fundament der ganzen Kultur.', ['Vulkan', 'Vulcanis', "T'Khasi"]),
   P('andoria', 'Andoria', L(13.3, 6.9), 'planet', 'fed', 2, 'ice', ['TOS', 'ENT', 'DIS'], 'Andoria',
     'Eisiger Mond eines Gasriesen und Heimat der blauhäutigen Andorianer, die ebenfalls zu den Gründern der Föderation gehören.', ['Andor']),
@@ -69,7 +69,7 @@ export const PLACES = [
     'Heimat der Benziten, die außerhalb ihrer Atmosphäre auf Atemgeräte angewiesen sind.', ['Benziten']),
   P('veridian', 'Veridian III', L(-1050, 380), 'battle', 'fed', 4, 'desert', ['Filme'], 'Veridian_III',
     'Unbewohnte Welt, auf der Kirk und Picard gemeinsam Soran aufhielten. Hier stürzte die Enterprise-D ab.', ['Enterprise-D Absturz']),
-  P('bakuplanet', "Ba'ku-Planet", L(2050, 1450), 'planet', 'ind', 3, 'jungle', ['Filme'], "Ba'ku-Planet",
+  P('bakuplanet', "Ba'ku-Planet", L(2050, 1450), 'planet', 'ind', 3, 'jungle', ['Filme'], "Ba'ku (Planet)",
     'Idyllische Welt im Briar Patch. Ihre Ringe verlangsamen das Altern der Bewohner fast vollständig.', ['Baku']),
   P('xindus', 'Xindus (Trümmer)', L(900, 640), 'anomaly', 'ind', 4, 'debris', ['ENT'], 'Xindus',
     'Zerstörte Urheimat der Xindi im Herzen der Delphischen Ausdehnung.', ['Xindi']),
@@ -129,7 +129,7 @@ export const PLACES = [
     'Asteroidenfeld, in dem das Wrack der USS Pegasus mit einer verbotenen Tarntechnik verborgen lag.', ['USS Pegasus']),
 
   // ─── Gamma-Quadrant ────────────────────────────────────────────
-  P('idran', 'Idran (Wurmloch-Ausgang)', [-38000, -26500], 'wormhole', 'ind', 1, 'wormhole', ['DS9'], 'Idran',
+  P('idran', 'Idran (Wurmloch-Ausgang)', [-38000, -26500], 'wormhole', 'ind', 1, 'wormhole', ['DS9'], 'Idran-System',
     'Dreifachsternsystem am anderen Ende des Bajoranischen Wurmlochs, also der erste Halt im Gamma-Quadranten.', ['Gamma-Quadrant']),
   P('gruender', 'Gründer-Heimatwelt', [-35500, -19800], 'capital', 'dom', 1, 'ocean', ['DS9'], 'Heimatwelt_der_Gründer',
     'Ozeanwelt der Wechselbälger, die als Gründer das Dominion lenken. Verborgen im Omarion-Nebel.', ['Founders', 'Wechselbälger', 'Große Verbindung']),
@@ -145,7 +145,7 @@ export const PLACES = [
     'Erste bajoranische Kolonie im Gamma-Quadranten, 2370 vom Dominion vernichtet.', []),
   P('jemhadar', "Jem'Hadar-Brutstätten", [-30500, -24500], 'station', 'dom', 4, 'station', ['DS9'], "Jem'Hadar",
     'Anlagen, in denen das Dominion seine genetisch gezüchteten Soldaten heranwachsen lässt.', ["Jem'Hadar", 'Ketracel-White']),
-  P('teplan', 'Teplan', [-27500, -19500], 'planet', 'dom', 4, 'barren', ['DS9'], 'Teplan',
+  P('teplan', 'Teplan', [-27500, -19500], 'planet', 'dom', 4, 'barren', ['DS9'], 'Teplan-System',
     'Das Dominion bestrafte diese Welt mit einer tödlichen Seuche, deren Male, „die Blüte“, alle Bewohner tragen.', []),
 
   // ─── Delta-Quadrant ────────────────────────────────────────────
@@ -163,7 +163,7 @@ export const PLACES = [
     'Riesige Struktur aus Tausenden Modulen und Sitz der Borg-Königin. Von hier aus wird das Kollektiv gesteuert.', ['Borg-Königin', 'Unicomplex']),
   P('unimatrix', 'Unimatrix 01', [17500, -22500], 'station', 'bor', 4, 'station', ['VOY'], 'Unimatrix',
     'Zentrales Kommandogitter des Kollektivs im Unikomplex.', []),
-  P('transwarp', 'Transwarp-Hub', [7200, -1200], 'station', 'bor', 2, 'station', ['VOY'], 'Transwarp-Hub',
+  P('transwarp', 'Transwarp-Hub', [7200, -1200], 'station', 'bor', 2, 'station', ['VOY'], 'Transwarpzentrum',
     'Knotenpunkt des Borg-Transwarpnetzes. Voyager nutzte ihn 2378 für die Heimkehr und zerstörte ihn dabei.', ['Transwarp']),
   P('krenim', 'Krenim-Heimat', [19200, -5800], 'capital', 'kre', 3, 'city', ['VOY'], 'Krenim',
     'Zentrum der Krenim. Ein Zeitwaffenschiff löschte hier ganze Völker aus der Geschichte aus.', ['Ein Jahr Hölle']),
@@ -189,7 +189,7 @@ export const PLACES = [
     'Führte mit Vendikar einen Krieg nur per Computer. Die berechneten Opfer gingen anschließend freiwillig in Desintegrationskammern.', []),
   P('organia', 'Organia', L(1650, -350), 'planet', 'ind', 3, 'barren', ['TOS', 'ENT'], 'Organia',
     'Scheinbar rückständige Welt zwischen Föderation und Klingonen. Ihre körperlosen Bewohner zwangen beide Seiten 2267 zum Frieden.', ['Organianer']),
-  P('sherman', "Sherman's Planet", L(1450, -150), 'planet', 'fed', 4, 'jungle', ['TOS'], "Sherman's_Planet",
+  P('sherman', "Sherman's Planet", L(1450, -150), 'planet', 'fed', 4, 'jungle', ['TOS'], 'Sherman-Planet',
     'Umstrittene Agrarwelt. Für ihre Entwicklung lagerte die Station K-7 Getreide, das die Tribbles auffraßen.', ['Station K-7', 'Tribbles']),
   P('angelone', 'Angel One', L(-1350, 350), 'planet', 'ind', 4, 'ocean', ['TNG'], 'Angel_One',
     'Matriarchalisch regierte Welt, auf der die Enterprise-D nach Überlebenden eines Frachters suchte.', []),
@@ -207,7 +207,7 @@ export const PLACES = [
     'Planet im Gamma-Quadranten, der nur alle sechzig Jahre für kurze Zeit in unserem Raum auftaucht.', []),
   P('sikaris', 'Sikaris', [30500, -25000], 'planet', 'ind', 4, 'city', ['VOY'], 'Sikaris',
     'Gastfreundliche, aber verschlossene Welt. Ihr Faltraum-Transporter hätte Voyager weit nach Hause bringen können.', []),
-  P('mokra', 'Mokra-Ordnung', [27800, -21200], 'planet', 'ind', 4, 'barren', ['VOY'], 'Mokra',
+  P('mokra', 'Mokra-Ordnung', [27800, -21200], 'planet', 'ind', 4, 'barren', ['VOY'], 'Mokra-Orden',
     'Polizeistaat, in dem Janeway und Torres verhaftet wurden und der Widerstand ihnen half.', []),
   P('akritiri', 'Akritiri', [23200, -13600], 'planet', 'ind', 4, 'barren', ['VOY'], 'Akritiri',
     'Ihre Gefängnis-Satelliten hielten Kim und Paris fest, nachdem man sie eines Anschlags beschuldigt hatte.', []),
@@ -215,7 +215,7 @@ export const PLACES = [
     'Telepathische Gesellschaft, in der schon ein gewalttätiger Gedanke als Verbrechen gilt.', []),
   P('quarra', 'Quarra', [8600, -1450], 'planet', 'ind', 3, 'city', ['VOY'], 'Quarra',
     'Arbeitswelt, die fremde Schiffsbesatzungen ihrer Erinnerungen beraubt und in Fabriken einsetzt.', []),
-  P('nekritstation', 'Nekrit-Versorgungsstation', [26600, -19400], 'station', 'ind', 4, 'station', ['VOY'], 'Nekrit-Weite',
+  P('nekritstation', 'Nekrit-Versorgungsstation', [26600, -19400], 'station', 'ind', 4, 'station', ['VOY'], 'Nekrit-Ausdehnung',
     'Handelsposten am Rand der Nekrit-Weite, an dem Voyager Vorräte auffüllte, bevor sie in den Nebel flog.', []),
 
   // ─── Galaxisweit ───────────────────────────────────────────────

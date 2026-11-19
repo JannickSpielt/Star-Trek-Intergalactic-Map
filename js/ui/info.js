@@ -55,7 +55,7 @@ export function createInfo({ onClose, onCenter, onFocusPower = () => {} }) {
     el.style.setProperty('--c', f.color);
     title.textContent = p.name;
     title.classList.toggle('long', p.name.length > 16);
-    const rel = [Math.round(p.pos[0] - SOL[0]), Math.round(SOL[1] - p.pos[1])];
+    const rel = [Math.round(p.pos[0] - SOL[0]) || 0, Math.round(SOL[1] - p.pos[1]) || 0]; // kein „-0“
     // Suche mit Direktsprung: öffnet die Seite, falls vorhanden, sonst die Trefferliste
     const ma = `https://memory-alpha.fandom.com/de/wiki/Spezial:Suche?search=${encodeURIComponent(p.ma.replace(/_/g, ' '))}&go=Go`;
     body.innerHTML = `
@@ -116,7 +116,7 @@ export function createInfo({ onClose, onCenter, onFocusPower = () => {} }) {
     title.classList.toggle('long', f.name.length > 16);
     const t = TERRITORIES.find(x => x.faction === fid);
     const cap = PLACES.find(p => p.id === i.capital);
-    const ma = `https://memory-alpha.fandom.com/de/wiki/Spezial:Suche?search=${encodeURIComponent(f.name)}&go=Go`;
+    const ma = `https://memory-alpha.fandom.com/de/wiki/Spezial:Suche?search=${encodeURIComponent(i.ma ?? f.name)}&go=Go`;
     body.innerHTML = `
       <div class="info-art"><div class="ring"></div><canvas width="400" height="400" aria-label="Umriss des Gebiets"></canvas></div>
       <span class="chip" style="--c:${f.color}">Großmacht · Stand 2375</span>

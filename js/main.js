@@ -113,6 +113,8 @@ function start() {
   /* ── Kamerafahrten ── */
   let flight = null;
   function flyTo(where, opts = {}) {
+    // ein Sprung zu einem anderen Ziel hält eine laufende Reise an, statt von ihr überstimmt zu werden
+    map.journey?.pause?.();
     const p = typeof where === 'string' ? PLACE[where] : null;
     const target = p ? p.pos : where;
     if (!target) return false;
@@ -236,7 +238,11 @@ function start() {
     if (e.target.closest?.('input')) return;
     if (e.key === '+' || e.key === '=') zoomBy(0.6);
     else if (e.key === '-') zoomBy(1.7);
-    else if (e.key === 'Escape') select(null);
+    else if (e.key === 'Escape') {
+      // Esc schließt zuerst das Infofenster, danach den Reise-Abspieler
+      if (document.getElementById('info').classList.contains('open')) { select(null); info.hide(); document.body.classList.remove('info-open'); }
+      else if (map.journey?.isOpen) map.journey.close();
+    }
   });
 
   /* ── Öffentliche Schnittstelle ── */
@@ -280,6 +286,9 @@ function start() {
   window.__map = map;
 
   map.journey = createJourney({ el: document.getElementById('player'), route: voyager, map });
+  // Abspieler und Infofenster nie übereinander: Öffnen der Reise schließt die Infos
+  const openJourney = map.journey.open;
+  map.journey.open = () => { select(null); info.hide(); document.body.classList.remove('info-open'); openJourney(); };
   const frameUi = createFrame({
     bookmarks: BOOKMARKS,
     powers: TERRITORIES.map(t => ({ id: t.faction, name: FACTIONS[t.faction].name, short: FACTIONS[t.faction].short, color: FACTIONS[t.faction].color, quadrant: quadrant(t.center).slice(0, 1) }))

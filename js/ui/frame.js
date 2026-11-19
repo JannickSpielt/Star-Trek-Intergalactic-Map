@@ -94,7 +94,7 @@ export function createFrame({ bookmarks, layers, onBookmark, powers = [], onPowe
   return {
     /** target: Kartenkoordinate, pxPerLy: Bildschirmskala dort. */
     setStatus({ target, pxPerLy, distance }) {
-      const rx = Math.round(target[0] - SOL[0]), ry = Math.round(SOL[1] - target[1]);
+      const rx = Math.round(target[0] - SOL[0]) || 0, ry = Math.round(SOL[1] - target[1]) || 0; // kein „-0“
       const ly = nice(110 / pxPerLy);
       const key = `${quadrant(target)}|${rx}|${ry}|${ly}|${Math.round(distance)}`;
       if (key === last) return; last = key;

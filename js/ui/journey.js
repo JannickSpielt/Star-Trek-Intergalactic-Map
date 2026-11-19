@@ -96,6 +96,8 @@ export function createJourney({ el, route, map }) {
       route.setProgress(1, false);
     },
     goToStop,
+    pause() { if (playing) setPlaying(false); },
+    get isOpen() { return open; },
     state: () => ({ t, playing, open, stop: shownStop, lit: route.lit, ship3d: route.ship3d }),
   };
   return api;
