@@ -400,4 +400,25 @@ export default async function ({ page, check, assert, sleep, settle, brightness,
     assert.ok(t[0] > 0.6, `far tilt ${t[0]}`); assert.ok(t[1] < 0.05, `near tilt ${t[1]}`);
     assert.equal(await page.$('#reset-view') !== null, false, 'reset/rotate button still there');
   });
+
+  // ── Suche: Mächte, Regionen, Reisen, keine Treffer ──
+  const searchPick = async q => { await page.fill('#search', q); await page.waitForSelector('#results.open li'); await page.press('#search', 'Enter'); await sleep(300); };
+  await check('searching a power opens its info', async () => {
+    await page.evaluate(() => window.__map.select(null));
+    await searchPick('Klingonen');
+    await page.waitForSelector('#info.open');
+    assert.match(await page.textContent('#info-title'), /Klingonisches Reich/);
+    await page.click('#info-close');
+  });
+  await check('searching "Voyager" opens the journey player', async () => {
+    await searchPick('Voyager');
+    await page.waitForSelector('#player.open', { timeout: 5000 });
+    await page.click('#player-close');
+  });
+  await check('a search without results says so', async () => {
+    await page.fill('#search', 'xyzzyq');
+    await page.waitForSelector('#results.open li.empty');
+    assert.match(await page.textContent('#results'), /Keine Treffer/);
+    await page.fill('#search', ''); await page.evaluate(() => document.activeElement.blur());
+  });
 }

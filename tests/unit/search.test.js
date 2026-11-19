@@ -31,3 +31,35 @@ test('empty or unknown queries return nothing', () => {
   assert.deepEqual(search('   ', PLACES), []);
   assert.deepEqual(search('xyzzy', PLACES), []);
 });
+
+import { buildIndex } from '../../js/core/search.js';
+const idx = buildIndex();
+const top = q => search(q, idx)[0];
+
+test('index covers places, powers, regions and journeys', () => {
+  assert.equal(top('Klingonen').kind, 'power');
+  assert.equal(top('Klingonen').id, 'kli');
+  assert.equal(top('Föderation').id, 'fed');
+  assert.equal(top('Badlands').kind, 'region');
+  assert.equal(top('Neutrale Zone').kind, 'border');
+  assert.equal(top('Voyager').kind, 'journey');
+  assert.equal(top('qonos').id, 'qonos');
+});
+
+test('tolerates small typos and plain-vowel umlauts', () => {
+  assert.equal(top('Kronoss').id, 'qonos');
+  assert.equal(top('Vulcn').id, 'vulcan');
+  assert.equal(top('Kardassia').id, 'cardassia');
+  assert.equal(top('Grunder').id, 'gruender');
+  assert.equal(top('fursorger').id, 'caretaker');
+});
+
+test('exact and prefix matches still beat fuzzy ones', () => {
+  assert.equal(top('Bajor').id, 'bajor');
+  assert.equal(top('Romulus').id, 'romulus');
+});
+
+test('wormhole finds the Bajoran wormhole first', () => {
+  assert.equal(top('wormhole').id, 'wurmloch-bajor');
+  assert.equal(top('Wurmloch').id, 'wurmloch-bajor');
+});

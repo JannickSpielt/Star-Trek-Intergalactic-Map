@@ -106,7 +106,7 @@ export const PLACES = [
   P('ds9', 'Deep Space 9', L(-2150, -1060), 'station', 'fed', 2, 'station', ['DS9', 'TNG', 'VOY', 'PIC', 'LD'], 'Deep_Space_9',
     'Frühere cardassianische Station Terok Nor, heute von Bajor und der Föderation betrieben. Wichtigster Außenposten am Tor zum Gamma-Quadranten.', ['Terok Nor', 'DS9']),
   P('wurmloch-bajor', 'Bajoranisches Wurmloch', L(-2120, -1015), 'wormhole', 'ind', 2, 'wormhole', ['DS9'], 'Bajoranisches_Wurmloch',
-    'Das einzige bekannte stabile Wurmloch. Es verbindet das Bajor-System mit dem Idran-System im Gamma-Quadranten.', ['Himmelstempel', 'Celestial Temple']),
+    'Das einzige bekannte stabile Wurmloch. Es verbindet das Bajor-System mit dem Idran-System im Gamma-Quadranten.', ['Wurmloch', 'Wormhole', 'Bajoran Wormhole', 'Himmelstempel', 'Celestial Temple']),
   P('chintoka', "Chin'toka", L(-3250, -1900), 'battle', 'car', 4, 'barren', ['DS9'], "Chin'toka",
     'Hier gelang den Alliierten im Dominion-Krieg der erste große Vorstoß in cardassianisches Gebiet.', []),
   P('kessik', 'Kessik IV', L(-2600, -750), 'planet', 'ind', 4, 'jungle', ['DS9'], 'Kessik_IV',

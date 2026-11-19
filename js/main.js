@@ -13,6 +13,7 @@ import { VOYAGER } from './data/routes.js';
 import { createFrame } from './ui/frame.js';
 import { createInfo } from './ui/info.js';
 import { createSearchUI } from './ui/search-ui.js';
+import { buildIndex } from './core/search.js';
 import { createMinimap } from './ui/minimap.js';
 import { runIntro } from './ui/intro.js';
 import { BOOKMARKS } from './data/shapes.js';
@@ -295,7 +296,12 @@ function start() {
     map.showPower(fid);
   };
   map.on('select', p => { info.show(p); document.body.classList.toggle('info-open', !!p); });
-  createSearchUI(document.getElementById('search'), document.getElementById('results'), PLACES, id => map.focus(id));
+  createSearchUI(document.getElementById('search'), document.getElementById('results'), buildIndex(), item => {
+    if (item.kind === 'place') map.focus(item.id);
+    else if (item.kind === 'power') map.focusPower(item.id);
+    else if (item.kind === 'journey') map.journey.open();
+    else flyTo(item.pos, { distance: item.kind === 'border' ? 4500 : 3000 });
+  });
   const minimap = createMinimap(document.getElementById('minimap'), { onJump: pos => flyTo(pos, { distance: Math.min(cam.distance, 30000) }) });
   map.onFrame(c => minimap.update(c, c.distance * Math.tan((FOV * Math.PI) / 360) * (W / H)));
   runIntro(map, { target: [0, 4000], distance: 125000, azimuth: 0, tilt: 0.78 });
