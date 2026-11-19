@@ -4,6 +4,23 @@ import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
 import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
 import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
 import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
+import { ShaderPass } from 'three/addons/postprocessing/ShaderPass.js';
+
+/**
+ * Sicherheitsnetz vor dem Glow: ungültige Pixel (NaN/Inf) würden vom Bloom zu
+ * flackernden schwarzen Quadraten verschmiert. Sie werden hier auf 0 gesetzt,
+ * extreme Werte begrenzt.
+ */
+const SanitizeShader = {
+  uniforms: { tDiffuse: { value: null } },
+  vertexShader: `varying vec2 vUv; void main(){ vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }`,
+  fragmentShader: `uniform sampler2D tDiffuse; varying vec2 vUv;
+    void main(){
+      vec4 c = texture2D(tDiffuse, vUv);
+      bool bad = any(isnan(c)) || any(isinf(c)) || c.r != c.r || c.g != c.g || c.b != c.b || c.a != c.a;
+      gl_FragColor = bad ? vec4(0.0) : clamp(c, vec4(0.0), vec4(64.0));
+    }`,
+};
 
 export function hasWebGL() {
   try {
@@ -40,6 +57,7 @@ export function createScene(canvas, quality) {
   if (quality !== 'low') {
     composer = new EffectComposer(renderer);
     composer.addPass(new RenderPass(scene, camera));
+    composer.addPass(new ShaderPass(SanitizeShader));
     bloom = new UnrealBloomPass(new THREE.Vector2(256, 256), 0.85, 0.55, 0.12);
     composer.addPass(bloom);
     composer.addPass(new OutputPass());

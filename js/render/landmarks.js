@@ -46,7 +46,7 @@ function funnel(color) {
     fragmentShader: `uniform float uTime; uniform vec3 uColor; uniform float uFade; varying vec2 vUv;
       void main(){
         float sw = 0.5 + 0.5 * sin(vUv.x * 6.2831 * 4.0 + vUv.y * 14.0 - uTime * 2.0);
-        float a = (0.25 + 0.75 * pow(sw, 3.0)) * (1.0 - vUv.y * 0.6) * uFade;
+        float a = (0.25 + 0.75 * pow(clamp(sw, 0.0, 1.0), 3.0)) * (1.0 - vUv.y * 0.6) * uFade;
         vec3 c = mix(vec3(1.0, 0.95, 0.8), uColor, vUv.y);
         gl_FragColor = vec4(c * a, a);
       }`,

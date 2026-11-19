@@ -29,7 +29,7 @@ const ribbonMat = (color, opts = {}) => new THREE.ShaderMaterial({
   vertexShader: `attribute vec2 rib; varying vec2 vR; void main(){ vR = rib; gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.0); }`,
   fragmentShader: `uniform vec3 uColor; uniform float uHatch; uniform float uTime; uniform float uOpacity; varying vec2 vR;
     void main(){
-      float edge = pow(1.0 - vR.y, 2.2);
+      float edge = pow(clamp(1.0 - vR.y, 0.0, 1.0), 2.2);
       float a = edge * 0.85;
       if (uHatch > 0.5) { float h = step(0.5, fract(vR.x * 0.02 + vR.y * 0.6 - uTime * 0.05)); a = 0.18 + h * 0.22 + smoothstep(0.85, 1.0, 1.0 - abs(vR.y * 2.0 - 1.0)) * 0.0; }
       a *= uOpacity;
@@ -175,7 +175,7 @@ export function createOverlays() {
     ...common, blending: THREE.AdditiveBlending, uniforms: { uTime: { value: 0 } },
     vertexShader: `attribute float t; varying float vT; void main(){ vT = t; gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.0); gl_PointSize = 3.0; }`,
     fragmentShader: `uniform float uTime; varying float vT;
-      void main(){ float p = fract(vT * 6.0 - uTime * 0.25); float a = 0.25 + 0.75 * pow(p, 6.0);
+      void main(){ float p = fract(vT * 6.0 - uTime * 0.25); float a = 0.25 + 0.75 * pow(clamp(p, 0.0, 1.0), 6.0);
         vec3 c = mix(vec3(0.45,0.7,1.0), vec3(1.0,0.85,0.55), p); gl_FragColor = vec4(c * a, a); }`,
   });
   wormhole.add(new THREE.Line(wg, wm), new THREE.Points(wg, wm));

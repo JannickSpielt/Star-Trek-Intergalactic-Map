@@ -35,3 +35,22 @@ test('point sprites stay below the portable size limit', () => {
     if (!Number.isNaN(v)) assert.ok(v <= 256, `max point size ${v}`);
   }
 });
+
+// pow(x, y) ist in GLSL für x < 0 undefiniert (Apple-GPUs liefern NaN). Basis immer absichern.
+test('GLSL pow() never gets an unguarded base', () => {
+  const dir = new URL('../../js/render/', import.meta.url);
+  const bad = [];
+  for (const f of readdirSync(dir)) {
+    const src = readFileSync(new URL(f, dir), 'utf8');
+    for (const m of src.matchAll(/(?<!Math\.)\bpow\(\s*([^,]+),/g)) {
+      if (!/^(max|clamp|abs|fract)\(/.test(m[1].trim())) bad.push(`${f}: pow(${m[1]}, …)`);
+    }
+  }
+  assert.deepEqual(bad, []);
+});
+
+// Sicherheitsnetz: vor dem Glow-Effekt werden NaN/Inf-Pixel auf 0 gesetzt.
+test('the bloom pipeline sanitizes NaN and Inf pixels', () => {
+  const src = readFileSync(new URL('../../js/render/scene.js', import.meta.url), 'utf8');
+  assert.match(src, /isnan/); assert.match(src, /isinf/);
+});
