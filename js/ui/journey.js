@@ -87,7 +87,7 @@ export function createJourney({ el, route, map }) {
       document.body.classList.add('journey-open');
       if (t >= 1) t = 0;
       setT(t);
-      map.flyTo([22000, -15000], { distance: 62000, tilt: 0.7 });
+      map.flyTo([22000, -15000], { distance: 62000 });
     },
     close() {
       open = false; setPlaying(false);

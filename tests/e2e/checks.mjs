@@ -150,19 +150,18 @@ export default async function ({ page, check, assert, sleep, settle, brightness,
     assert.ok(b.x - a.x > 80, `sol x ${a.x.toFixed(0)} -> ${b.x.toFixed(0)}`);
     assert.ok(Math.abs(b.y - a.y) < 30, `sol y ${a.y.toFixed(0)} -> ${b.y.toFixed(0)}`);
   });
-  await check('mobile: two-finger twist turns the map the same way', async () => {
-    await m.page.evaluate(() => window.__map.flyTo('sol', { distance: 9000, tilt: 0.3, azimuth: 0 }));
+  await check('mobile: two-finger twist does not rotate or tilt the map', async () => {
+    await m.page.evaluate(() => window.__map.flyTo('sol', { distance: 9000 }));
     await settle(m.page); await sleep(300);
-    // Bezugspunkt rechts von der Bildmitte
+    const s0 = await m.page.evaluate(() => window.__map.state());
     const c = [195, 422];
-    const ref = await m.page.evaluate(([x, y]) => window.__map.groundAt(x, y), [c[0] + 100, c[1]]);
     await touch('touchStart', [[c[0] - 60, c[1]], [c[0] + 60, c[1]]]);
-    for (let i = 1; i <= 10; i++) { const a = (i / 10) * 0.5; await touch('touchMove', [[c[0] - 60 * Math.cos(a), c[1] - 60 * Math.sin(a)], [c[0] + 60 * Math.cos(a), c[1] + 60 * Math.sin(a)]]); }
+    for (let i = 1; i <= 10; i++) { const a = (i / 10) * 0.5; await touch('touchMove', [[c[0] - 60 * Math.cos(a), c[1] - 60 * Math.sin(a) - i * 4], [c[0] + 60 * Math.cos(a), c[1] + 60 * Math.sin(a) - i * 4]]); }
     await touch('touchEnd', []);
     await sleep(200);
-    const p = await m.page.evaluate(r => window.__map.screenOfPos(r), ref);
-    // Finger im Uhrzeigersinn gedreht -> rechter Punkt wandert nach unten
-    assert.ok(p.y > c[1] + 20, `ref y ${p.y.toFixed(0)} (center ${c[1]})`);
+    const s1 = await m.page.evaluate(() => window.__map.state());
+    assert.equal(s1.azimuth, s0.azimuth, 'azimuth changed');
+    assert.equal(s1.tilt, s0.tilt, 'tilt changed');
   });
   // ── Handy-Fehler aus dem Nutzertest ──
   await check('mobile: swiping the sheet header down closes the info sheet', async () => {
@@ -376,5 +375,29 @@ export default async function ({ page, check, assert, sleep, settle, brightness,
     const b = await brightness(page, 640, 400);
     assert.ok(b.lum > 30, `lum ${b.lum.toFixed(1)}`);
     await page.evaluate(() => window.__map.perf.setLevel(0));
+  });
+
+  // ── Steuerung ohne Drehen/Neigen ──
+  await check('right-drag and ctrl-drag pan instead of rotating', async () => {
+    await page.evaluate(() => { window.__map.select(null); window.__map.flyTo('sol', { distance: 9000 }); });
+    await settle(page); await sleep(300);
+    const s0 = await page.evaluate(() => window.__map.state());
+    await page.mouse.move(640, 400); await page.mouse.down({ button: 'right' });
+    await page.mouse.move(760, 360, { steps: 6 }); await page.mouse.up({ button: 'right' });
+    await page.keyboard.down('Control'); await page.mouse.move(640, 400); await page.mouse.down();
+    await page.mouse.move(700, 450, { steps: 6 }); await page.mouse.up(); await page.keyboard.up('Control');
+    await sleep(200);
+    const s1 = await page.evaluate(() => window.__map.state());
+    assert.equal(s1.azimuth, s0.azimuth); assert.equal(s1.tilt, s0.tilt);
+    assert.ok(Math.hypot(s1.target[0] - s0.target[0], s1.target[1] - s0.target[1]) > 1, 'did not pan');
+  });
+  await check('tilt follows the zoom automatically', async () => {
+    const t = await page.evaluate(async () => {
+      const m = window.__map; const out = [];
+      for (const d of [125000, 600]) { m.flyTo('sol', { distance: d }); await new Promise(r => { const w = () => (m.state().flying ? requestAnimationFrame(w) : r()); w(); }); out.push(m.effectiveTilt()); }
+      return out;
+    });
+    assert.ok(t[0] > 0.6, `far tilt ${t[0]}`); assert.ok(t[1] < 0.05, `near tilt ${t[1]}`);
+    assert.equal(await page.$('#reset-view') !== null, false, 'reset/rotate button still there');
   });
 }

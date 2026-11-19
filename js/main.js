@@ -16,7 +16,7 @@ import { createSearchUI } from './ui/search-ui.js';
 import { createMinimap } from './ui/minimap.js';
 import { runIntro } from './ui/intro.js';
 import { BOOKMARKS } from './data/shapes.js';
-import { createCameraState, cameraPosition, screenAxes, flyPath, applyZoom, applyRotate, applyPan, pinch, isClick } from './core/camera.js';
+import { createCameraState, cameraPosition, screenAxes, flyPath, applyZoom, applyPan, pinch, isClick, effectiveTilt } from './core/camera.js';
 import { distance as dist } from './core/coords.js';
 import { PLACES } from './data/places.js';
 import { FACTIONS, FACTION_INFO } from './data/factions.js';
@@ -84,7 +84,9 @@ function start() {
   const routeAnchors = voyager.anchors.map(a => ({ ...a, layer: routeLayer }));
   const labels = createLabelLayer(document.getElementById('labels'), markers, [...overlays.anchors, ...routeAnchors]);
 
-  let cam = createCameraState({ target: [0, 4000], distance: 125000, azimuth: 0, tilt: 0.78 });
+  // feste Grundneigung; wie stark sie wirkt, hängt allein vom Zoom ab (effectiveTilt)
+  const TILT = 0.78;
+  let cam = createCameraState({ target: [0, 4000], distance: 125000, azimuth: 0, tilt: TILT });
   let W = 1, H = 1;
   const tmpV = new THREE.Vector3(), tmpUp = new THREE.Vector3();
 
@@ -113,7 +115,7 @@ function start() {
     const p = typeof where === 'string' ? PLACE[where] : null;
     const target = p ? p.pos : where;
     if (!target) return false;
-    const to = { ...cam, target: [...target], distance: opts.distance ?? (p ? focusDistance(p) : cam.distance), tilt: opts.tilt ?? cam.tilt, azimuth: opts.azimuth ?? cam.azimuth };
+    const to = { ...cam, target: [...target], distance: opts.distance ?? (p ? focusDistance(p) : cam.distance), tilt: opts.tilt ?? TILT, azimuth: opts.azimuth ?? 0 };
     const span = Math.log(Math.max(1, dist(cam.target, to.target)) + 1) + Math.abs(Math.log(to.distance / cam.distance));
     flight = { path: flyPath(cam, to), t0: performance.now(), dur: opts.duration ?? Math.min(3200, 900 + span * 160) };
     return true;
@@ -155,8 +157,7 @@ function start() {
     pointers.set(e.pointerId, [e.clientX, e.clientY]);
     flight = null;
     if (pointers.size === 1) {
-      const rotate = e.button === 2 || e.ctrlKey || e.shiftKey;
-      drag = { start: [e.clientX, e.clientY], last: [e.clientX, e.clientY], t0: performance.now(), rotate, anchor: groundAt(e.clientX, e.clientY), moved: false };
+      drag = { start: [e.clientX, e.clientY], last: [e.clientX, e.clientY], t0: performance.now(), anchor: groundAt(e.clientX, e.clientY), moved: false };
     } else if (pointers.size === 2) {
       const [a, b] = [...pointers.values()];
       gesture = { a: [...a], b: [...b] };
@@ -169,10 +170,9 @@ function start() {
       const [a, b] = [...pointers.values()];
       const g = pinch(gesture, { a, b });
       const mid = [(a[0] + b[0]) / 2, (a[1] + b[1]) / 2];
-      const vertical = Math.abs(g.panPx[1]) > Math.abs(g.panPx[0]) * 1.5 && Math.abs(g.zoom - 1) < 0.02;
+      // Zwei Finger: nur zoomen und verschieben (Drehen/Neigen gibt es bewusst nicht)
       cam = applyZoom(cam, g.zoom, groundAt(mid[0], mid[1]));
-      cam = applyRotate(cam, g.rotate, vertical ? -g.panPx[1] * 0.004 : 0);
-      if (!vertical) cam = applyPan(cam, g.panPx[0], g.panPx[1], H, FOV);
+      cam = applyPan(cam, g.panPx[0], g.panPx[1], H, FOV);
       gesture = { a: [...a], b: [...b] };
       dismissHint();
       return;
@@ -182,12 +182,10 @@ function start() {
       drag.last = [e.clientX, e.clientY];
       if (Math.hypot(e.clientX - drag.start[0], e.clientY - drag.start[1]) > 4) { drag.moved = true; canvas.classList.add('dragging'); dismissHint(); }
       if (!drag.moved) return;
-      if (drag.rotate) cam = applyRotate(cam, dx * 0.005, -dy * 0.004);
-      else {
-        const now = groundAt(e.clientX, e.clientY);
-        if (drag.anchor && now) cam = { ...cam, target: [cam.target[0] + drag.anchor[0] - now[0], cam.target[1] + drag.anchor[1] - now[1]] };
-        else cam = applyPan(cam, dx, dy, H, FOV);
-      }
+      // jede Maustaste verschiebt; die Neigung ergibt sich automatisch aus dem Zoom
+      const now = groundAt(e.clientX, e.clientY);
+      if (drag.anchor && now) cam = { ...cam, target: [cam.target[0] + drag.anchor[0] - now[0], cam.target[1] + drag.anchor[1] - now[1]] };
+      else cam = applyPan(cam, dx, dy, H, FOV);
       return;
     }
     // Hover
@@ -233,7 +231,6 @@ function start() {
   const zoomBy = f => flyTo(cam.target, { distance: cam.distance * f });
   document.getElementById('zoom-in')?.addEventListener('click', () => zoomBy(0.45));
   document.getElementById('zoom-out')?.addEventListener('click', () => zoomBy(2.2));
-  document.getElementById('reset-view')?.addEventListener('click', () => flyTo(cam.target, { azimuth: 0, tilt: 0.78 }));
   window.addEventListener('keydown', e => {
     if (e.target.closest?.('input')) return;
     if (e.key === '+' || e.key === '=') zoomBy(0.6);
@@ -264,6 +261,7 @@ function start() {
     onFrame(fn) { frameHooks.push(fn); },
     screenOf: id => markers.screenOf(id),
     pickAt: (x, y) => markers.pick(x, y),
+    effectiveTilt: () => effectiveTilt(cam),
     screenOfPos: pos => { const v = new THREE.Vector3(pos[0], 0, pos[1]).project(ctx.camera); return { x: (v.x * 0.5 + 0.5) * W, y: (-v.y * 0.5 + 0.5) * H }; },
     landmarks: { get count() { return landmarks.count; }, visible: id => landmarks.visible(id) },
     groundAt,
@@ -287,7 +285,7 @@ function start() {
       .filter(p => FACTION_INFO[p.id]),
     onPower: fid => map.focusPower(fid),
     layers: overlays.layers,
-    onBookmark: b => (b.journey ? map.journey.open() : flyTo(b.target, { distance: b.distance === 'fit' ? 125000 : b.distance, tilt: b.distance === 'fit' ? 0.78 : cam.tilt })),
+    onBookmark: b => (b.journey ? map.journey.open() : flyTo(b.target, { distance: b.distance === 'fit' ? 125000 : b.distance })),
   });
   const info = createInfo({ onClose: () => { select(null); info.hide(); }, onCenter: id => map.focus(id), onFocusPower: fid => map.focusPower(fid) });
   map.showPower = fid => { select(null); info.showFaction(fid); document.body.classList.add('info-open'); };

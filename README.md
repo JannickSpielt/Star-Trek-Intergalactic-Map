@@ -20,7 +20,7 @@ Mit Quadranten, Großmächten, Grenzen und Schauplätzen aus den Serien und Film
 
 ## Was drin ist
 
-Die Galaxie besteht aus rund 300.000 Sternen in vier Spiralarmen, mit Balken, Staubbändern und leuchtenden Nebeln. Man kann von der ganzen Milchstraße bis zu den Nachbarsternen der Erde hineinzoomen und die Ansicht frei drehen und kippen.
+Die Galaxie besteht aus rund 300.000 Sternen in vier Spiralarmen, mit Balken, Staubbändern und leuchtenden Nebeln. Man kann von der ganzen Milchstraße bis zu den Nachbarsternen der Erde hineinzoomen. Von weit weg blickt man schräg auf die Galaxie, beim Heranzoomen geht die Ansicht automatisch in die Draufsicht über.
 
 Eingezeichnet sind 20 Reiche, von der Föderation, den Klingonen und Romulanern bis zum Dominion im Gamma- und den Borg im Delta-Quadranten. Dazu kommen die Romulanische Neutrale Zone, die Entmilitarisierte Zone an der cardassianischen Grenze und die Grenze zum Klingonischen Reich.
 
@@ -30,7 +30,7 @@ Anomalien wie die Badlands, der Mutara-Nebel, die Delphische Ausdehnung und das 
 
 Die Suche kennt auch andere Schreibweisen: „Kronos“ findet Qo'noS, „Terok Nor“ findet Deep Space 9. In der Seitenleiste gibt es Schnellziele und Schalter für die einzelnen Ebenen, unten rechts eine Übersichtskarte.
 
-Auf dem Handy funktionieren Ziehen, Pinch-Zoom und Drehen mit zwei Fingern, das Infofenster fährt von unten herein. Die Seite lässt sich als App installieren und läuft nach dem ersten Besuch auch ohne Internet.
+Auf dem Handy funktionieren Ziehen und Pinch-Zoom, das Infofenster fährt von unten herein. Die Seite lässt sich als App installieren und läuft nach dem ersten Besuch auch ohne Internet.
 
 <table>
 <tr>
@@ -49,7 +49,6 @@ Auf dem Handy funktionieren Ziehen, Pinch-Zoom und Drehen mit zwei Fingern, das 
 |---|---|---|
 | Verschieben | Linke Maustaste ziehen | Ein Finger ziehen |
 | Zoomen | Mausrad, Doppelklick, `+` / `−` | Zwei Finger auseinander oder zusammen |
-| Drehen und kippen | Rechte Maustaste ziehen (oder `Strg` + ziehen) | Zwei Finger drehen oder gemeinsam hoch und runter schieben |
 | Ort auswählen | Klick auf die Markierung | Antippen |
 | Suchen | `/` drücken oder ins Suchfeld klicken | Suchfeld antippen |
 | Auswahl schließen | `Esc` | Infofenster nach unten wischen |
