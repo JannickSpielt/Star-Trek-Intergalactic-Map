@@ -7,6 +7,7 @@ import { createMarkers } from './render/markers.js';
 import { createLabelLayer } from './ui/labels-dom.js';
 import { createRoute } from './render/route.js';
 import { createLandmarks } from './render/landmarks.js';
+import { createAdaptive } from './core/adaptive.js';
 import { createJourney } from './ui/journey.js';
 import { VOYAGER } from './data/routes.js';
 import { createFrame } from './ui/frame.js';
@@ -303,7 +304,14 @@ function start() {
 
   /* ── Render-Schleife ── */
   const clock = new THREE.Clock();
+  // Automatische Qualitätsanpassung: bei dauerhaft langsamen Bildern schrittweise zurückschalten
+  const adaptive = createAdaptive({ maxLevel: 3, onChange: l => ctx.setLevel(l) });
+  map.perf = { get level() { return adaptive.level; }, setLevel: l => ctx.setLevel(l) };
+  let lastFrame = 0;
   function frame() {
+    const nowMs = performance.now();
+    if (lastFrame && !document.hidden) adaptive.frame(nowMs - lastFrame);
+    lastFrame = nowMs;
     const time = clock.getElapsedTime();
     if (flight) {
       const t = Math.min(1, (performance.now() - flight.t0) / flight.dur);

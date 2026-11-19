@@ -45,13 +45,27 @@ export function createScene(canvas, quality) {
     composer.addPass(new OutputPass());
   }
 
+  let W = 1, H = 1, useBloom = !!composer;
   function resize(w, h) {
+    W = w; H = h;
     renderer.setSize(w, h, false);
     camera.aspect = w / h;
     camera.updateProjectionMatrix();
     if (composer) { composer.setPixelRatio(renderer.getPixelRatio()); composer.setSize(w, h); }
   }
 
-  const render = () => (composer ? composer.render() : renderer.render(scene, camera));
-  return { renderer, scene, camera, composer, bloom, resize, render, quality };
+  /**
+   * Qualitätsstufe zur Laufzeit (automatische Anpassung bei langsamen Geräten):
+   * 0 = voll, 1 = Auflösung 1×, 2 = zusätzlich ohne Glow, 3 = Auflösung 0,75×.
+   */
+  function setLevel(level) {
+    const dpr = window.devicePixelRatio || 1;
+    const pr = level >= 3 ? 0.75 : level >= 1 ? 1 : Math.min(dpr, maxPr);
+    renderer.setPixelRatio(Math.min(dpr, pr));
+    useBloom = !!composer && level < 2;
+    resize(W, H);
+  }
+
+  const render = () => (useBloom ? composer.render() : renderer.render(scene, camera));
+  return { renderer, scene, camera, composer, bloom, resize, render, quality, setLevel };
 }

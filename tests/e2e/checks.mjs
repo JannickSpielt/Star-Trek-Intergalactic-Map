@@ -313,4 +313,15 @@ export default async function ({ page, check, assert, sleep, settle, brightness,
     assert.equal(await page.evaluate(() => window.__map.landmarks.visible('ds9')), true);
   });
   await shot(page, '11-landmark-ds9');
+
+  // ── Qualitätsstufen zur Laufzeit ──
+  await check('lowest runtime quality still renders the galaxy', async () => {
+    await page.evaluate(() => { window.__map.select(null); window.__map.flyTo([0, 4000], { distance: 125000, tilt: 0.78 }); });
+    await settle(page);
+    await page.evaluate(() => window.__map.perf.setLevel(3));
+    await sleep(800);
+    const b = await brightness(page, 640, 400);
+    assert.ok(b.lum > 30, `lum ${b.lum.toFixed(1)}`);
+    await page.evaluate(() => window.__map.perf.setLevel(0));
+  });
 }
