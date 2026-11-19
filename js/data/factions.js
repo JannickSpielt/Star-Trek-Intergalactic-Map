@@ -28,7 +28,7 @@ export const FACTIONS = {
  * capital: id eines Ortes aus places.js (oder null).
  */
 export const FACTION_INFO = {
-  fed: { capital: 'sol', government: 'Demokratische Föderation, Präsident und Föderationsrat', species: ['Menschen', 'Vulkanier', 'Andorianer', 'Telariten', 'Betazoiden', 'Trill'], series: ['TOS', 'TNG', 'DS9', 'VOY', 'ENT', 'DIS', 'PIC', 'SNW', 'LD', 'PRO', 'Filme'], founded: '2161',
+  fed: { capital: 'sol', government: 'Demokratische Föderation, Präsident und Föderationsrat', species: ['Menschen', 'Vulkanier', 'Andorianer', 'Tellariten', 'Betazoiden', 'Trill'], series: ['TOS', 'TNG', 'DS9', 'VOY', 'ENT', 'DIS', 'PIC', 'SNW', 'LD', 'PRO', 'Filme'], founded: '2161',
     desc: 'Bund aus über hundert Welten, gegründet von Erde, Vulcan, Andoria und Tellar. Die Sternenflotte erforscht den Weltraum, schützt die Grenzen und vertritt die Föderation nach außen. Geld spielt im Alltag kaum noch eine Rolle.' },
   kli: { capital: 'qonos', government: 'Hoher Rat unter einem Kanzler, Adelshäuser', species: ['Klingonen'], series: ['TOS', 'TNG', 'DS9', 'ENT', 'DIS', 'Filme'],
     desc: 'Kriegerkultur, in der Ehre, Familie und ein ruhmreicher Tod zählen. Nach Jahrzehnten der Feindschaft sind die Klingonen um 2375 Verbündete der Föderation und kämpfen im Dominion-Krieg an ihrer Seite.' },

@@ -12,7 +12,9 @@ export function buildPath(stops) {
     legs.push({ from: i - 1, a, b, len, jump, t0: total, w });
     total += w;
   }
-  for (const l of legs) { l.t0 /= total; l.t1 = l.t0 + l.w / total; }
+  for (const l of legs) l.t0 /= total;
+  // jede Etappe endet exakt dort, wo die nächste beginnt (keine Rundungslücken an Stationen)
+  legs.forEach((l, i) => { l.t1 = i + 1 < legs.length ? legs[i + 1].t0 : 1; });
   const tOfStop = i => (i <= 0 ? 0 : i >= stops.length - 1 ? 1 : legs[i].t0);
   /** Anzahl erreichter Stationen (inklusive Start) bei Fortschritt t. */
   const reachedStops = t => {

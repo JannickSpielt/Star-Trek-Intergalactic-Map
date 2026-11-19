@@ -57,7 +57,7 @@ export default async function ({ page, check, assert, sleep, settle, brightness,
   await check('status bar shows quadrant at Sol', async () => {
     await page.evaluate(() => window.__map.flyTo('sol'));
     await settle(page); await sleep(300);
-    const qt = await page.textContent("#readout-quadrant"); const st = await page.evaluate(() => window.__map.state()); assert.match(qt, /Beta/, `got "${qt}" target ${st.target} flying ${st.flying}`);
+    const qt = await page.textContent("#readout-quadrant"); const st = await page.evaluate(() => window.__map.state()); assert.match(qt, /Alpha/, `got "${qt}" target ${st.target} flying ${st.flying}`);
     assert.match(await page.textContent('#scale-label'), /LJ/);
   });
 
@@ -66,7 +66,7 @@ export default async function ({ page, check, assert, sleep, settle, brightness,
     await page.evaluate(() => window.__map.focus('vulcan'));
     await page.waitForSelector('#info.open', { timeout: 5000 });
     const text = await page.textContent('#info');
-    assert.match(text, /Vulcan/); assert.match(text, /Beta/); assert.match(text, /TOS/);
+    assert.match(text, /Vulcan/); assert.match(text, /Alpha/); assert.match(text, /TOS/);
     const href = await page.getAttribute('#info a.ma-link', 'href');
     assert.ok(href.startsWith('https://memory-alpha.fandom.com/de/wiki/Spezial:Suche?') && href.includes('search=Vulcan') && href.includes('go=Go'), href);
   });

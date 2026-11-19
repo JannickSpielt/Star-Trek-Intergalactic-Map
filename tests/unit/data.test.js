@@ -65,3 +65,11 @@ test('more places, each marked whether its position is canon-exact', () => {
   for (const id of ['sol', 'alphacen', 'wolf359', 'tellar', 'vulcan']) assert.equal(byId[id].approx, false, id);
   for (const id of ['qonos', 'romulus', 'ocampa', 'deneva']) assert.equal(byId[id].approx, true, id);
 });
+
+test('known content errors stay fixed', () => {
+  assert.ok(!/Spocks Halbbruder Sam/.test(byId.deneva.desc), 'Deneva: Sam ist Kirks Bruder');
+  assert.ok(/Kirk/.test(byId.deneva.desc));
+  const all = JSON.stringify(PLACES);
+  assert.ok(!/Telariten/.test(all), 'Tellariten mit Doppel-l');
+  assert.equal(byId.mars.approx, true, 'Mars-Lage ist nur angenähert');
+});

@@ -11,7 +11,7 @@ const L = (x, y) => [x, SY + y];
 
 /** Kompakter Konstruktor: P(id, name, pos, type, faction, rank, art, series, ma, desc, aliases) */
 /** Orte, deren Position der Canon genau festlegt; alle anderen sind angenähert. */
-const EXACT = new Set(['sol', 'mars', 'jupiter', 'alphacen', 'wolf359', 'tellar', 'vulcan']);
+const EXACT = new Set(['sol', 'alphacen', 'wolf359', 'tellar', 'vulcan']);
 const P = (id, name, pos, type, faction, rank, art, series, ma, desc, aliases = []) =>
   ({ id, name, pos, type, faction, rank, art, series, ma, desc, aliases, approx: !EXACT.has(id) });
 
@@ -28,7 +28,7 @@ export const PLACES = [
   P('andoria', 'Andoria', L(13.3, 6.9), 'planet', 'fed', 2, 'ice', ['TOS', 'ENT', 'DIS'], 'Andoria',
     'Eisiger Mond eines Gasriesen und Heimat der blauhäutigen Andorianer, die ebenfalls zu den Gründern der Föderation gehören.', ['Andor']),
   P('tellar', 'Tellar Prime', L(-8.06, 8.06), 'planet', 'fed', 2, 'jungle', ['TOS', 'ENT', 'DIS'], 'Tellar_Prime',
-    'Heimat der streitfreudigen Telariten, für die eine hitzige Debatte zum guten Ton gehört. Gründungsmitglied der Föderation.', ['Tellar']),
+    'Heimat der streitfreudigen Tellariten, für die eine hitzige Debatte zum guten Ton gehört. Gründungsmitglied der Föderation.', ['Tellar']),
   P('alphacen', 'Alpha Centauri', L(-3.7, 2.38), 'planet', 'fed', 5, 'ocean', ['TOS', 'ENT', 'PIC'], 'Alpha_Centauri',
     'Das nächste Sternsystem zur Erde und eine der ältesten menschlichen Kolonien.', ['Alpha Cen']),
   P('wolf359', 'Wolf 359', L(4.48, -6.52), 'battle', 'fed', 5, 'debris', ['TNG', 'DS9', 'PIC'], 'Schlacht_von_Wolf_359',
@@ -171,14 +171,14 @@ export const PLACES = [
     'Uraltes Kommunikationsnetz, über das Voyager erstmals wieder mit der Sternenflotte sprechen konnte.', ['Hirogen']),
   P('malon', 'Malon-Raum', [15400, -3200], 'capital', 'mal', 4, 'lava', ['VOY'], 'Malon',
     'Industriezentrum der Malon, die ihren giftigen Theta-Strahlungsabfall in fremden Regionen abladen.', []),
-  P('devore', 'Devore-Prime', [13100, -2300], 'capital', 'dev', 4, 'city', ['VOY'], 'Devore',
+  P('devore', 'Devore-Prime', [10000, -1750], 'capital', 'dev', 4, 'city', ['VOY'], 'Devore',
     'Heimat des Devore-Imperiums, das Telepathen erbarmungslos verfolgt.', []),
   P('brunali', 'Brunali-Welt', [19800, -11500], 'planet', 'ind', 4, 'barren', ['VOY'], 'Brunali',
     'Landwirtschaftliche Welt, die immer wieder von Borg-Angriffen heimgesucht wurde.', []),
 
   // ─── Weitere Schauplätze (Positionen angenähert) ───────────────
   P('deneva', 'Deneva', L(-650, 520), 'planet', 'fed', 4, 'ocean', ['TOS'], 'Deneva',
-    'Wohlhabende Kolonie, die von schwarmartigen Parasiten befallen wurde. Spocks Halbbruder Sam Kirk starb hier.', []),
+    'Wohlhabende Kolonie, die von schwarmartigen Parasiten befallen wurde. Kirks Bruder Sam kam dabei ums Leben.', []),
   P('ardana', 'Ardana', L(-820, -60), 'planet', 'fed', 4, 'city', ['TOS'], 'Ardana',
     'Welt mit der schwebenden Wolkenstadt Stratos, in der die Oberschicht lebte, während die Troglyten im Bergwerk arbeiteten.', ['Stratos']),
   P('capella', 'Capella IV', L(-260, 980), 'planet', 'ind', 4, 'desert', ['TOS'], 'Capella_IV',

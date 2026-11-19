@@ -25,7 +25,7 @@ export const TERRITORIES = [
   { faction: 'kre', center: [19300, -5900], rx: 1500, ry: 1000, rot: 0.2, seed: 16 },
   { faction: 'hir', center: [17200, -4300], rx: 2800, ry: 1200, rot: 0.1, seed: 17 },
   { faction: 'mal', center: [15400, -3200], rx: 1300, ry: 800, rot: 0, seed: 18 },
-  { faction: 'dev', center: [13100, -2300], rx: 1100, ry: 650, rot: 0, seed: 19 },
+  { faction: 'dev', center: [10000, -1750], rx: 1100, ry: 650, rot: 0, seed: 19 },
   { faction: 'tal', center: [33300, -28900], rx: 600, ry: 500, rot: 0, seed: 20 },
 ];
 

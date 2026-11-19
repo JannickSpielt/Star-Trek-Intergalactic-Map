@@ -5,10 +5,10 @@ import { blobPoints } from '../../js/core/blob.js';
 
 test('quadrant follows the core-Sol convention', () => {
   assert.equal(quadrant([-1, 1]), 'Alpha');
-  assert.equal(quadrant([1, 1]), 'Beta');
+  assert.equal(quadrant([1000, 1]), 'Beta');
   assert.equal(quadrant([-1, -1]), 'Gamma');
   assert.equal(quadrant([1, -1]), 'Delta');
-  assert.equal(quadrant([0, 26000]), 'Beta');
+  assert.equal(quadrant([0, 26000]), 'Alpha');
 });
 
 test('distance is euclidean in light years', () => {
@@ -31,4 +31,11 @@ test('blobPoints is deterministic and bounded', () => {
   assert.equal(a.length, 48);
   assert.deepEqual(a, blobPoints(shape));
   for (const [x, y] of a) assert.ok(Math.hypot(x - 100, y - 200) <= 1250);
+});
+
+test('Earth, Vulcan and Andoria count as Alpha quadrant; Klingons and Romulans as Beta', async () => {
+  const { PLACES } = await import('../../js/data/places.js');
+  const q = id => quadrant(PLACES.find(p => p.id === id).pos);
+  for (const id of ['sol', 'mars', 'jupiter', 'vulcan', 'andoria', 'tellar', 'alphacen']) assert.equal(q(id), 'Alpha', id);
+  for (const id of ['qonos', 'romulus', 'tholia']) assert.equal(q(id), 'Beta', id);
 });

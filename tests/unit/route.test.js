@@ -46,3 +46,14 @@ test('reachedStops counts the milestones the ship has passed', () => {
   assert.equal(path.reachedStops((path.tOfStop(4) + path.tOfStop(5)) / 2), 5);
   assert.equal(path.reachedStops(1), VOYAGER.stops.length);
 });
+
+test('journey facts: years and order match the series', () => {
+  const by = t => VOYAGER.stops.find(s => s.title.includes(t));
+  assert.equal(by('Vidiian').year, 2371);
+  assert.equal(by('Devore').year, 2375);
+  assert.equal(by('Slipstream').year, 2375);
+  const iSlip = VOYAGER.stops.indexOf(by('Slipstream')), iDev = VOYAGER.stops.indexOf(by('Devore'));
+  assert.ok(iSlip < iDev, 'Slipstream (Timeless) kommt vor den Devore (Counterpoint)');
+  assert.ok(!/vorübergehend seine Lunge/.test(by('Vidiian').text));
+  assert.ok(!/Flotte der Sternenflotte/.test(JSON.stringify(VOYAGER)));
+});
